@@ -1,15 +1,11 @@
 package ds.part1.FamilyDoctor.restController;
 
-import ds.part1.FamilyDoctor.config.JwtUtils;
 import ds.part1.FamilyDoctor.entity.*;
-import ds.part1.FamilyDoctor.extraClasses.ExtraMethods;
-import ds.part1.FamilyDoctor.implementation.DoctorDetailsImpl;
-import ds.part1.FamilyDoctor.payload.request.LoginRequest;
-import ds.part1.FamilyDoctor.payload.response.JwtResponseForDoctors;
-import ds.part1.FamilyDoctor.payload.response.MessageResponse;
 import ds.part1.FamilyDoctor.repository.RoleRepository;
 import ds.part1.FamilyDoctor.repository.UserRepository;
 import ds.part1.FamilyDoctor.service.AppointmentService;
+import ds.part1.FamilyDoctor.config.JwtUtils;
+import ds.part1.FamilyDoctor.payload.response.MessageResponse;
 import ds.part1.FamilyDoctor.service.CitizenService;
 import ds.part1.FamilyDoctor.service.DoctorService;
 import jakarta.validation.Valid;
@@ -17,16 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/doctor")
@@ -50,14 +42,8 @@ public class DoctorController {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
     @Secured("ROLE_ADMIN")
-    @PostMapping("/signup")
+    @PostMapping("/new")
     public ResponseEntity<?> registerDoctor(@Valid @RequestBody Doctor doctor){
 
         if (userRepository.existsByUsername(doctor.getUsername())) {
@@ -85,38 +71,6 @@ public class DoctorController {
         doctor.setRating(0);
         doctorService.saveDoctor(doctor);
         return ResponseEntity.ok(new MessageResponse("Doctor saved!"));
-    }
-
-    @PostMapping("/signin")
-    public ResponseEntity<?> autheticateDoctor(@Valid @RequestBody LoginRequest loginRequest){
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-
-        DoctorDetailsImpl doctorDetails = (DoctorDetailsImpl) authentication.getPrincipal();
-        List<String> roles = doctorDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new JwtResponseForDoctors(jwt,
-                doctorDetails.getId(),
-                doctorDetails.getFullName(),
-                doctorDetails.getUsername(),
-                doctorDetails.getEmail(),
-                doctorDetails.getPhoneNumber(),
-                doctorDetails.getDepartment(),
-                doctorDetails.getPrefecture(),
-                roles,
-                doctorDetails.getSpecialty(),
-                doctorDetails.getDoctorOfficeAddress(),
-                doctorDetails.getRating(),
-                doctorDetails.getAppointmentsCompleted(),
-                doctorDetails.getMaxNumberOfCitizens(),
-                doctorDetails.getCitizens(),
-                doctorDetails.getAppointments()));
-
     }
 
     @Secured("ROLE_ADMIN")
@@ -153,13 +107,6 @@ public class DoctorController {
 
         if (doctor==null){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
-        }
-
-        Set<Role> userRoles = doctor.getRoles();
-        for (Role role : userRoles){
-            if (role.getName().equals("ROLE_ADMIN") && !ExtraMethods.adminCheck()){
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: This user can't be deleted because is the last admin in the system!"));
-            }
         }
 
         //Remove doctor from all the citizens before deleting doctor
@@ -239,7 +186,7 @@ public class DoctorController {
         //Then removing the doctor from Citizen
         citizen.setDoctor(null);
 
-        return ResponseEntity.ok(new MessageResponse("Citizen \"+citizen.getFullName()+\" has been removed!"));
+        return ResponseEntity.ok(new MessageResponse("Citizen "+citizen.getFullName()+" has been removed!"));
     }
 
     @PostMapping("/accept/request/fromDoctor:{doctor_id}/forCitizen:{citizen_id}")
@@ -260,8 +207,8 @@ public class DoctorController {
         citizen.setDoctor(doctor);
         doctor.getCitizens().add(citizen);
 
-        return ResponseEntity.ok(new MessageResponse("Doctor \"+ doctor.getFullName()+\" has been set as a family doctor" +
-                " for citizen \"+citizen.getFullName()+\" !"));
+        return ResponseEntity.ok(new MessageResponse("Doctor "+ doctor.getFullName()+" has been set as a family doctor" +
+                " for citizen "+citizen.getFullName()+" !"));
     }
 
 }

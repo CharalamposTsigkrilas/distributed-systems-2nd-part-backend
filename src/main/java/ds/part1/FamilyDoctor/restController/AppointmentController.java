@@ -1,10 +1,10 @@
 package ds.part1.FamilyDoctor.restController;
 
-import ds.part1.FamilyDoctor.entity.Appointment;
 import ds.part1.FamilyDoctor.entity.Doctor;
+import ds.part1.FamilyDoctor.service.AppointmentService;
+import ds.part1.FamilyDoctor.entity.Appointment;
 import ds.part1.FamilyDoctor.entity.FamilyMember;
 import ds.part1.FamilyDoctor.payload.response.MessageResponse;
-import ds.part1.FamilyDoctor.service.AppointmentService;
 import ds.part1.FamilyDoctor.service.DoctorService;
 import ds.part1.FamilyDoctor.service.FamilyMemberService;
 import org.springframework.beans.factory.annotation.Autowired;

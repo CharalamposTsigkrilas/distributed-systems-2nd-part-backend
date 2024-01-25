@@ -21,14 +21,6 @@ public class AppConfig {
                 .scheme("bearer");
     }
 
-//    @Bean
-//    public GroupedOpenApi controllerApi(){
-//        return GroupedOpenApi.builder()
-//                .group("controller-api")
-//                .packagesToScan("ds.part1.FamilyDoctor")
-//                .build();
-//    }
-
     @Bean
     public OpenAPI openAPI() {
         OpenAPI info = new OpenAPI().addSecurityItem(new SecurityRequirement().

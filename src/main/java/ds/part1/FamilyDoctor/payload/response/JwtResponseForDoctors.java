@@ -2,7 +2,6 @@ package ds.part1.FamilyDoctor.payload.response;
 
 import ds.part1.FamilyDoctor.entity.Appointment;
 import ds.part1.FamilyDoctor.entity.Citizen;
-import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 

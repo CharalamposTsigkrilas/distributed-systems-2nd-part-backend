@@ -8,7 +8,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,7 +27,7 @@ public class FamilyMemberService {
         if (familyMemberRepository.count() <= citizenRepository.count()) {
 
             FamilyMember famMem1 = new FamilyMember("Mirto Vasileiou","01010100001","Wife");
-            Citizen citizen1 = citizenService.getCitizen(5L);
+            Citizen citizen1 = citizenService.getCitizen(4L);
             famMem1.setCitizen(citizen1);
 
             List<FamilyMember> fm = citizen1.getFamilyMembers();
@@ -38,7 +37,7 @@ public class FamilyMemberService {
             familyMemberRepository.save(famMem1);
 
             FamilyMember famMem2 = new FamilyMember("Konstantina Katsiri","01010100002","Wife");
-            Citizen citizen2 = citizenService.getCitizen(6L);
+            Citizen citizen2 = citizenService.getCitizen(5L);
             famMem2.setCitizen(citizen2);
 
             List<FamilyMember> fm2 = citizen2.getFamilyMembers();

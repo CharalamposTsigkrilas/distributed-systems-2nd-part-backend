@@ -1,5 +1,6 @@
 package ds.part1.FamilyDoctor.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -22,6 +23,7 @@ public class FamilyMember {
     @Size(max = 11)
     private String memberRelationship;
 
+    @JsonIgnore
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name="citizen_id")
     private Citizen citizen;

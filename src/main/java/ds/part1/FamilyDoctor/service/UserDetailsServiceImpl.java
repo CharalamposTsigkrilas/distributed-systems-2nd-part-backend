@@ -1,8 +1,8 @@
 package ds.part1.FamilyDoctor.service;
 
-import ds.part1.FamilyDoctor.entity.User;
 import ds.part1.FamilyDoctor.implementation.UserDetailsImpl;
 import ds.part1.FamilyDoctor.repository.UserRepository;
+import ds.part1.FamilyDoctor.entity.User;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

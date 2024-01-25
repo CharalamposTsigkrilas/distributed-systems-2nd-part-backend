@@ -1,7 +1,7 @@
 package ds.part1.FamilyDoctor.service;
 
-import ds.part1.FamilyDoctor.entity.Appointment;
 import ds.part1.FamilyDoctor.repository.AppointmentRepository;
+import ds.part1.FamilyDoctor.entity.Appointment;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

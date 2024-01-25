@@ -35,8 +35,8 @@ public class CitizenService {
     @Transactional
     public void createDefaultCitizens(){
         if (citizenRepository.count() == 0) {
-            Citizen citizen1 = new Citizen("Kyriakos Antoniadis", "KoulisAnto",passwordEncoder.encode("11223344"),"kanto@gmail.com","2101230000","Sterea Ellada", "Attiki","20050301234","Tompra 3");
-            Citizen citizen2 = new Citizen("Nikolas Zafeiriadis", "NikcZafei",passwordEncoder.encode("44332211"),"nzafeiriadis@gmail.com","2103210000","Sterea Ellada", "Viotia","20059001234","Kosmitorou 23");
+            Citizen citizen1 = new Citizen("Kyriakos Antoniadis", "KoulisAnto",passwordEncoder.encode("1234"),"kanto@gmail.com","2101230000","Sterea Ellada", "Attiki","20050301234","Tompra 3");
+            Citizen citizen2 = new Citizen("Nikolas Zafeiriadis", "NikcZafei",passwordEncoder.encode("1234"),"nzafeiriadis@gmail.com","2103210000","Sterea Ellada", "Viotia","20059001234","Kosmitorou 23");
 
             Set<Role> roles = new HashSet<>();
 

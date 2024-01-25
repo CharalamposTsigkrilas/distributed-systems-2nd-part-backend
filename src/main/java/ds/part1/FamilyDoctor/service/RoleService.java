@@ -1,7 +1,6 @@
 package ds.part1.FamilyDoctor.service;
 
 import ds.part1.FamilyDoctor.entity.Role;
-import ds.part1.FamilyDoctor.repository.FamilyMemberRepository;
 import ds.part1.FamilyDoctor.repository.RoleRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
@@ -57,8 +56,8 @@ public class RoleService {
         familyMemberService.createDefaultFamilyMembers();
     }
 
-    @Transactional
-    public Role getRole(Long roleId) {
-        return roleRepository.findById(roleId).get();
-    }
+//    @Transactional
+//    public Role getRole(Long roleId) {
+//        return roleRepository.findById(roleId).get();
+//    }
 }

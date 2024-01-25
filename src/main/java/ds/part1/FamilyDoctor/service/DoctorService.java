@@ -6,7 +6,6 @@ import ds.part1.FamilyDoctor.entity.Doctor;
 import ds.part1.FamilyDoctor.entity.Role;
 import ds.part1.FamilyDoctor.repository.DoctorRepository;
 import ds.part1.FamilyDoctor.repository.RoleRepository;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,8 +30,8 @@ public class DoctorService {
     @Transactional
     public void createDefaultDoctors(){
         if (doctorRepository.count() == 0) {
-            Doctor doctor1 = new Doctor("Iwannis Athanasiadis","GiannisAtha",passwordEncoder.encode("12345678"),"gatha@gmail.com","2100000123","Sterea Ellada", "Attiki","Kardiologos","Davaki 11, Kallithea");
-            Doctor doctor2 = new Doctor("Giorgos Alexopoulos","GiorgosAlex",passwordEncoder.encode("87654321"),"galexop@gmail.com","2100000321","Sterea Ellada", "Evia","Kardiologos","Davaki 11, Kallithea");
+            Doctor doctor1 = new Doctor("Iwannis Athanasiadis","GiannisAtha",passwordEncoder.encode("1234"),"gatha@gmail.com","2100000123","Sterea Ellada", "Attiki","Kardiologos","Davaki 11, Kallithea");
+            Doctor doctor2 = new Doctor("Giorgos Alexopoulos","GiorgosAlex",passwordEncoder.encode("1234"),"galexop@gmail.com","2100000321","Sterea Ellada", "Evia","Kardiologos","Davaki 11, Kallithea");
 
             Set<Role> roles = new HashSet<>();
 

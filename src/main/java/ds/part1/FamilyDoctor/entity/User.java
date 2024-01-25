@@ -1,6 +1,5 @@
 package ds.part1.FamilyDoctor.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -24,11 +23,11 @@ public class User {
     private String fullName;
 
     @NotBlank
-    @Size(min = 8, max = 40)
+    @Size(min = 4, max = 40)
     private String username;
 
     @NotBlank
-    @Size(min = 8)
+    @Size(min = 4)
     private String password;
 
     @NotBlank

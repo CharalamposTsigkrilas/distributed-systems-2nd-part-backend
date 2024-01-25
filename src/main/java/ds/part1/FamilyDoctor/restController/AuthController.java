@@ -1,15 +1,18 @@
 package ds.part1.FamilyDoctor.restController;
 
-import ds.part1.FamilyDoctor.config.JwtUtils;
-import ds.part1.FamilyDoctor.entity.Role;
-import ds.part1.FamilyDoctor.entity.User;
-import ds.part1.FamilyDoctor.payload.request.LoginRequest;
-import ds.part1.FamilyDoctor.payload.request.SignupRequest;
-import ds.part1.FamilyDoctor.payload.response.JwtResponseForUsers;
-import ds.part1.FamilyDoctor.payload.response.MessageResponse;
+import ds.part1.FamilyDoctor.entity.Citizen;
+import ds.part1.FamilyDoctor.entity.Doctor;
 import ds.part1.FamilyDoctor.repository.RoleRepository;
 import ds.part1.FamilyDoctor.repository.UserRepository;
+import ds.part1.FamilyDoctor.config.JwtUtils;
+import ds.part1.FamilyDoctor.payload.request.LoginRequest;
+import ds.part1.FamilyDoctor.payload.response.JwtResponseForCitizens;
+import ds.part1.FamilyDoctor.payload.response.JwtResponseForDoctors;
+import ds.part1.FamilyDoctor.payload.response.JwtResponseForUsers;
+import ds.part1.FamilyDoctor.payload.response.MessageResponse;
 import ds.part1.FamilyDoctor.implementation.UserDetailsImpl;
+import ds.part1.FamilyDoctor.service.CitizenService;
+import ds.part1.FamilyDoctor.service.DoctorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -43,6 +44,12 @@ public class AuthController {
     BCryptPasswordEncoder encoder;
 
     @Autowired
+    CitizenService citizenService;
+
+    @Autowired
+    DoctorService doctorService;
+
+    @Autowired
     JwtUtils jwtUtils;
 
     @PostMapping("/signin")
@@ -58,69 +65,63 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponseForUsers(jwt,
-                userDetails.getId(),
-                userDetails.getFullName(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                userDetails.getPhoneNumber(),
-                userDetails.getDepartment(),
-                userDetails.getPrefecture(),
-                roles));
-    }
+        Long userId = userDetails.getId();
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        for(String userRoles:roles){
+            switch (userRoles) {
+                case "ROLE_CITIZEN":
 
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    Citizen citizen = citizenService.getCitizen(userId);
+                    return ResponseEntity.ok(new JwtResponseForCitizens(jwt,
+                            citizen.getId(),
+                            citizen.getFullName(),
+                            citizen.getUsername(),
+                            citizen.getEmail(),
+                            citizen.getPhoneNumber(),
+                            citizen.getDepartment(),
+                            citizen.getPrefecture(),
+                            roles,
+                            citizen.getAMKA(),
+                            citizen.getApartmentAddress(),
+                            citizen.getFamilyMembers(),
+                            citizen.getDoctor()));
+
+                case "ROLE_DOCTOR":
+
+                    Doctor doctor = doctorService.getDoctor(userId);
+
+                    return ResponseEntity.ok(new JwtResponseForDoctors(jwt,
+                            doctor.getId(),
+                            doctor.getFullName(),
+                            doctor.getUsername(),
+                            doctor.getEmail(),
+                            doctor.getPhoneNumber(),
+                            doctor.getDepartment(),
+                            doctor.getPrefecture(),
+                            roles,
+                            doctor.getSpecialty(),
+                            doctor.getDoctorOfficeAddress(),
+                            doctor.getRating(),
+                            doctor.getAppointmentsCompleted(),
+                            doctor.getMaxNumberOfCitizens(),
+                            doctor.getCitizens(),
+                            doctor.getAppointments()));
+
+                case "ROLE_ADMIN":
+
+                    return ResponseEntity.ok(new JwtResponseForUsers(jwt,
+                            userDetails.getId(),
+                            userDetails.getFullName(),
+                            userDetails.getUsername(),
+                            userDetails.getEmail(),
+                            userDetails.getPhoneNumber(),
+                            userDetails.getDepartment(),
+                            userDetails.getPrefecture(),
+                            roles));
+            }
         }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
-        }
-
-        //Create new user's account
-        User user = new User(signUpRequest.getFullName(),
-                signUpRequest.getUsername(),
-                encoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getEmail(),
-                signUpRequest.getPhoneNumber(),
-                signUpRequest.getDepartment(),
-                signUpRequest.getPrefecture());
-
-        Set<String> strRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
-
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
-
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByName("ROLE_USER")
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
-                }
-            });
-        }
-
-        user.setRoles(roles);
-        userRepository.save(user);
-
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.badRequest().body(new MessageResponse("Error: User not found!"));
     }
 
 }
