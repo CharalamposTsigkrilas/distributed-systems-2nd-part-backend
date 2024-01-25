@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/citizen")
 public class CitizenController {
@@ -50,7 +51,7 @@ public class CitizenController {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
-    //@Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     @GetMapping("")
     public List<Citizen> getCitizens(){
         return citizenService.getCitizens();

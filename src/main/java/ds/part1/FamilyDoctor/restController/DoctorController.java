@@ -4,7 +4,6 @@ import ds.part1.FamilyDoctor.entity.*;
 import ds.part1.FamilyDoctor.repository.RoleRepository;
 import ds.part1.FamilyDoctor.repository.UserRepository;
 import ds.part1.FamilyDoctor.service.AppointmentService;
-import ds.part1.FamilyDoctor.config.JwtUtils;
 import ds.part1.FamilyDoctor.payload.response.MessageResponse;
 import ds.part1.FamilyDoctor.service.CitizenService;
 import ds.part1.FamilyDoctor.service.DoctorService;
@@ -12,7 +11,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/doctor")
 public class DoctorController {
@@ -41,6 +40,12 @@ public class DoctorController {
 
     @Autowired
     private BCryptPasswordEncoder encoder;
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("")
+    public List<Doctor> getDoctors(){
+        return doctorService.getDoctors();
+    }
 
     @Secured("ROLE_ADMIN")
     @PostMapping("/new")
