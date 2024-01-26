@@ -41,6 +41,11 @@ public class DoctorController {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
+    @GetMapping("/{doctor_id}")
+    public Doctor getDoctor(@PathVariable Long doctor_id){
+        return doctorService.getDoctor(doctor_id);
+    }
+
     @Secured("ROLE_ADMIN")
     @GetMapping("")
     public List<Doctor> getDoctors(){

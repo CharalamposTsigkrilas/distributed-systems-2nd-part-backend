@@ -51,6 +51,11 @@ public class CitizenController {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
+    @GetMapping("/{citizen_id}")
+    public Citizen getCitizen(@PathVariable Long citizen_id){
+        return citizenService.getCitizen(citizen_id);
+    }
+
     @Secured("ROLE_ADMIN")
     @GetMapping("")
     public List<Citizen> getCitizens(){
