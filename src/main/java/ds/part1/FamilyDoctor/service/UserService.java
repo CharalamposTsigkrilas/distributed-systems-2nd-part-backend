@@ -31,8 +31,8 @@ public class UserService {
 
         if (userRepository.count() == 0) {
 
-            User admin = new User("My Name Is Admin","IAmAdmin",
-                    passwordEncoder.encode("1234"), "admin@hua.com",
+            User admin = new User("My Name Is Admin","admin",
+                    passwordEncoder.encode("1234"), "admin@hua.gr",
                     "2101234567","Sterea Ellada", "Attiki");
 
             Set<Role> roles = new HashSet<>();
