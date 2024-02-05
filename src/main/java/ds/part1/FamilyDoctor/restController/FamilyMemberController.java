@@ -114,7 +114,7 @@ public class FamilyMemberController {
         }
 
         //Change FullName with citizen
-        if( familyMember.getCitizen().getFullName().equals(familyMember.getFullName()) ){
+        if( familyMember.getCitizen().getAMKA().equals(familyMember.getAMKA()) ){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: You cannot delete the main Family Member!"));
         }
 

@@ -21,6 +21,9 @@ public class Citizen extends User{
     @JoinTable(name = "citizen_family_members")
     private List<FamilyMember> familyMembers;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="request_id")
+    private Request request;
 
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name="doctor_id")
@@ -159,5 +162,13 @@ public class Citizen extends User{
 
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
+    }
+
+    public Request getRequest() {
+        return request;
+    }
+
+    public void setRequest(Request request) {
+        this.request = request;
     }
 }

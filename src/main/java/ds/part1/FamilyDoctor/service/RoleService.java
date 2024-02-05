@@ -1,11 +1,16 @@
 package ds.part1.FamilyDoctor.service;
 
+import ds.part1.FamilyDoctor.entity.Citizen;
+import ds.part1.FamilyDoctor.entity.Doctor;
 import ds.part1.FamilyDoctor.entity.Role;
 import ds.part1.FamilyDoctor.repository.RoleRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class RoleService {
@@ -54,10 +59,15 @@ public class RoleService {
         doctorService.createDefaultDoctors();
         citizenService.createDefaultCitizens();
         familyMemberService.createDefaultFamilyMembers();
+
+//        Citizen citizen = citizenService.getCitizen(4L);
+//        Doctor doctor = doctorService.getDoctor(2L);
+
+//        citizen.setDoctor(doctor);
+//        citizenService.updateCitizen(citizen);
+//        doctor.getCitizens().add(citizen);
+//        doctorService.saveDoctor(doctor);
     }
 
-//    @Transactional
-//    public Role getRole(Long roleId) {
-//        return roleRepository.findById(roleId).get();
-//    }
+
 }

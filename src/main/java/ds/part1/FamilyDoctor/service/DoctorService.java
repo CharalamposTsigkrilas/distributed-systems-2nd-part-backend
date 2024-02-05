@@ -1,9 +1,6 @@
 package ds.part1.FamilyDoctor.service;
 
-import ds.part1.FamilyDoctor.entity.Appointment;
-import ds.part1.FamilyDoctor.entity.Citizen;
-import ds.part1.FamilyDoctor.entity.Doctor;
-import ds.part1.FamilyDoctor.entity.Role;
+import ds.part1.FamilyDoctor.entity.*;
 import ds.part1.FamilyDoctor.repository.DoctorRepository;
 import ds.part1.FamilyDoctor.repository.RoleRepository;
 import jakarta.transaction.Transactional;
@@ -44,17 +41,12 @@ public class DoctorService {
             roles.add(doctorRole);
 
             doctor1.setRoles(roles);
-            doctor1.setAppointmentsCompleted(0);
-            doctor1.setRating(0F);
             doctor1.setMaxNumberOfCitizens(10);
-            doctorRepository.save(doctor1);
-
+            saveDoctor(doctor1);
 
             doctor2.setRoles(roles);
-            doctor2.setAppointmentsCompleted(0);
-            doctor2.setRating(0F);
             doctor2.setMaxNumberOfCitizens(5);
-            doctorRepository.save(doctor2);
+            saveDoctor(doctor2);
 
         }
     }
@@ -71,6 +63,8 @@ public class DoctorService {
 
     @Transactional
     public void saveDoctor(Doctor doctor){
+        doctor.setAppointmentsCompleted(0);
+        doctor.setRating(0F);
         doctorRepository.save(doctor);
     }
 
@@ -94,5 +88,11 @@ public class DoctorService {
     public List<Citizen> getDoctorCitizens(Long doctorId){
         Doctor doctor = doctorRepository.findById(doctorId).get();
         return doctor.getCitizens();
+    }
+
+    @Transactional
+    public List<Request> getDoctorRequests(Long doctorId){
+        Doctor doctor = doctorRepository.findById(doctorId).get();
+        return doctor.getRequests();
     }
 }

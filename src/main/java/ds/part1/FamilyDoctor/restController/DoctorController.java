@@ -14,6 +14,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -148,17 +149,18 @@ public class DoctorController {
 
     }
 
-    @GetMapping("/citizens/forDoctor:{doctor_id}")
+    @GetMapping("/{doctor_id}/citizens")
     public List<Citizen> showCustomers(@PathVariable Long doctor_id){
         Doctor doctor = doctorService.getDoctor(doctor_id);
 
-        List<Citizen> customers = null;
-        if(doctor==null){
-            ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
-        }else{
-            customers = doctorService.getDoctorCitizens(doctor_id);
-        }
-        return customers;
+//        List<Citizen> citizens = new ArrayList<>();
+//        if(doctor==null){
+//            ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
+//        }else{
+//            citizens = doctorService.getDoctorCitizens(doctor_id);
+//        }
+//        return citizens;
+        return doctor.getCitizens();
     }
 
     @GetMapping("/appointments/forDoctor:{doctor_id}")

@@ -17,9 +17,6 @@ public class Doctor extends User{
     @Size(max = 50)
     private String doctorOfficeAddress;
 
-    // 0.0-5.0
-    @DecimalMin(value = "0.0")
-    @DecimalMax(value = "5.0")
     private float rating;
 
     private int appointmentsCompleted;
@@ -33,6 +30,10 @@ public class Doctor extends User{
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "doctor_appointments")
     private List<Appointment> appointments;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "doctor_requests")
+    private List<Request> requests;
 
     public Doctor(String fullName, String username, String password, String email, String phoneNumber,
                   String department, String prefecture, String specialty, String doctorOfficeAddress) {
@@ -190,5 +191,13 @@ public class Doctor extends User{
 
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public List<Request> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<Request> requests) {
+        this.requests = requests;
     }
 }
