@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Request {
@@ -12,9 +13,10 @@ public class Request {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int accepted=-1; //-1 unseen
-                             //0 rejected
-                             //1 accepted
+    public enum status {unseen, rejected, accepted};
+
+    @NotBlank
+    private String currentStatus;
 
     public void setId(Long id) {
         this.id = id;
@@ -24,11 +26,11 @@ public class Request {
         return id;
     }
 
-    public int getAccepted() {
-        return accepted;
+    public String getCurrentStatus() {
+        return currentStatus;
     }
 
-    public void setAccepted(int accepted) {
-        this.accepted = accepted;
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
     }
 }

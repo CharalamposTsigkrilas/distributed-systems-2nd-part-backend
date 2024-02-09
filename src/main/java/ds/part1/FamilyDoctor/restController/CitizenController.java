@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -204,34 +205,34 @@ public class CitizenController {
         return family;
     }
 
-    @GetMapping("/family/doctor/forCitizen:{citizen_id}")
+    @GetMapping("/{citizen_id}/doctor")
     public Doctor showDoctor(@PathVariable Long citizen_id){
-        Citizen citizen = citizenService.getCitizen(citizen_id);
+//        Citizen citizen = citizenService.getCitizen(citizen_id);
 
-        if(citizen==null){
-            ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
-        }
+//        if(citizen==null){
+//            ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
+//        }
 
         Doctor doctor = citizenService.getCitizenDoctor(citizen_id);
 
-        if(doctor==null){
-            ResponseEntity.badRequest().body(new MessageResponse("Citizen doesn't have a family doctor!"));
-        }
+//        if(doctor==null){
+//            ResponseEntity.badRequest().body(new MessageResponse("Citizen doesn't have a family doctor!"));
+//        }
         return doctor;
     }
 
-    @GetMapping("/nearby/doctors/forCitizen:{citizen_id}")
+    @GetMapping("/{citizen_id}/nearby/doctors")
     public List<Doctor> showNearbyDoctors(@PathVariable Long citizen_id){
 
         Citizen citizen = citizenService.getCitizen(citizen_id);
 
-        if(citizen==null){
-            ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
-        }
+//        if(citizen==null){
+//            ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
+//        }
 
         //Checking all the doctors in the same prefecture as Citizen and add them in list that we return
         List<Doctor> allDoctors = doctorService.getDoctors();
-        List<Doctor> nearbyDoctors = null;
+        List<Doctor> nearbyDoctors = new ArrayList<>();
         for (Doctor currDoc: allDoctors){
             if(citizen.getPrefecture().equals(currDoc.getPrefecture())){
                 nearbyDoctors.add(currDoc);
@@ -239,7 +240,7 @@ public class CitizenController {
         }
 
         //If there are no doctors in the same prefecture we search doctors in the same department
-        if (nearbyDoctors==null){
+        if (nearbyDoctors.isEmpty()){
             for (Doctor currDoc: allDoctors){
                 if(citizen.getDepartment().equals(currDoc.getDepartment())){
                     nearbyDoctors.add(currDoc);

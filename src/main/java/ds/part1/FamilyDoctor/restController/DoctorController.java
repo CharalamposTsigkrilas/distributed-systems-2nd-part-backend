@@ -160,6 +160,10 @@ public class DoctorController {
 //            citizens = doctorService.getDoctorCitizens(doctor_id);
 //        }
 //        return citizens;
+        if(doctor.getCitizens().isEmpty()){
+            return null;
+        }
+
         return doctor.getCitizens();
     }
 
