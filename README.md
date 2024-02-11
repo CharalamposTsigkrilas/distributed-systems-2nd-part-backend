@@ -14,8 +14,4 @@
 
 # Java 17 needed and maven (3.9 recommended, possibly running in older versions too).
 
-# Now all you have to do is to run the project by pressing the play button in Intellij. 
-
-# To test now all the requests that Cotrollers classes send, you should have (local) postman, and by clicking the link bellow, you can test any request:
-
-https://gold-escape-216374.postman.co/workspace/Ds-Family-Doctor~3a2c8cbc-45d7-46da-8d70-078e740c2f70/collection/31926722-55a2135e-9eb6-428c-abd5-1e2c88a990fe?action=share&creator=31926722&active-environment=31926722-7db294d2-5ec5-464d-9f95-76f4dfd437c9
+# Now all you have to do is to run the project by pressing the play button in Intellij.

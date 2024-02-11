@@ -38,17 +38,12 @@ public class FamilyMemberService {
             Citizen citizen1 = citizens.get(0);
             Citizen citizen2 = citizens.get(1);
 
-            //famMem1.setCitizen(citizen1);
-            //famMem2.setCitizen(citizen2);
+            citizen1.getFamilyMembers().add(famMem1);
+            citizen2.getFamilyMembers().add(famMem2);
 
-            List<FamilyMember> fms1 = citizen1.getFamilyMembers();
-            List<FamilyMember> fms2 = citizen2.getFamilyMembers();
 
-            fms1.add(famMem1);
-            fms2.add(famMem2);
-
-            citizen1.setFamilyMembers(fms1);
-            citizen2.setFamilyMembers(fms2);
+            citizen1.setFamilyMembers(citizen1.getFamilyMembers());
+            citizen2.setFamilyMembers(citizen2.getFamilyMembers());
 
             citizenService.updateCitizen(citizen1);
             citizenService.updateCitizen(citizen2);
