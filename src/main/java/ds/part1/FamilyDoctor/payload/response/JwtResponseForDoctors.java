@@ -2,6 +2,7 @@ package ds.part1.FamilyDoctor.payload.response;
 
 import ds.part1.FamilyDoctor.entity.Appointment;
 import ds.part1.FamilyDoctor.entity.Citizen;
+import ds.part1.FamilyDoctor.entity.Request;
 
 import java.util.List;
 
@@ -15,10 +16,13 @@ public class JwtResponseForDoctors extends JwtResponseForUsers{
     private List<Citizen> citizens;
     private List<Appointment> appointments;
 
+    private List<Request> requests;
+
     public JwtResponseForDoctors(String token, Long id, String fullName, String username, String email,
                                  String phoneNumber, String department, String prefecture, List<String> roles,
                                  String specialty, String doctorOfficeAddress, float rating, int appointmentsCompleted,
-                                 int maxNumberOfCitizens, List<Citizen> citizens, List<Appointment> appointments) {
+                                 int maxNumberOfCitizens, List<Citizen> citizens, List<Appointment> appointments,
+                                 List<Request> requests) {
 
         super(token, id, fullName, username, email, phoneNumber, department, prefecture, roles);
 
@@ -29,6 +33,7 @@ public class JwtResponseForDoctors extends JwtResponseForUsers{
         this.maxNumberOfCitizens = maxNumberOfCitizens;
         this.citizens = citizens;
         this.appointments = appointments;
+        this.requests = requests;
     }
 
     @Override
@@ -160,5 +165,13 @@ public class JwtResponseForDoctors extends JwtResponseForUsers{
 
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public List<Request> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<Request> requests) {
+        this.requests = requests;
     }
 }

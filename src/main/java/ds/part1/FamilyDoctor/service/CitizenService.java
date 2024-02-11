@@ -35,8 +35,11 @@ public class CitizenService {
     @Transactional
     public void createDefaultCitizens(){
         if (citizenRepository.count() == 0) {
-            Citizen citizen1 = new Citizen("Kyriakos Antoniadis", "KoulisAnto",passwordEncoder.encode("1234"),"kanto@gmail.com","2101230000","Sterea Ellada", "Attiki","20050301234","Tompra 3");
-            Citizen citizen2 = new Citizen("Nikolas Zafeiriadis", "NikcZafei",passwordEncoder.encode("1234"),"nzafeiriadis@gmail.com","2103210000","Sterea Ellada", "Viotia","20059001234","Kosmitorou 23");
+            Citizen citizen1 = new Citizen("Kyriakos Antoniadis", "citizen1",passwordEncoder.encode("1234"),"kanto@gmail.com","2101230000","Sterea Ellada", "Attiki","20050301234","Tompra 3");
+            Citizen citizen2 = new Citizen("Nikolas Zafeiriadis", "citizen2",passwordEncoder.encode("1234"),"nzafeiriadis@gmail.com","2103210000","Sterea Ellada", "Viotia","20059001234","Kosmitorou 23");
+            Citizen citizen3 = new Citizen("Kwnstantinos Pappadopoulos", "citizen3",passwordEncoder.encode("1234"),"kwstaspap@gmail.com","2103212000","Kriti", "Xania","21089901234","25hs Martiou 34");
+            Citizen citizen4 = new Citizen("Mery Politou", "citizen4",passwordEncoder.encode("1234"),"merypolitou@gmail.com","2103213000","Makedonia", "Thessaloniki","21079501234","Skoufa 5");
+            Citizen citizen5 = new Citizen("Gwgw Georgiou", "citizen5",passwordEncoder.encode("1234"),"gwgwgeorgiou@gmail.com","2103214000","Makedonia", "Thessaloniki","20050101234","Kallirois 4");
 
             Set<Role> roles = new HashSet<>();
 
@@ -49,10 +52,16 @@ public class CitizenService {
             roles.add(citizenRole);
 
             citizen1.setRoles(roles);
-            saveCitizen(citizen1);
-
             citizen2.setRoles(roles);
+            citizen3.setRoles(roles);
+            citizen4.setRoles(roles);
+            citizen5.setRoles(roles);
+
+            saveCitizen(citizen1);
             saveCitizen(citizen2);
+            saveCitizen(citizen3);
+            saveCitizen(citizen4);
+            saveCitizen(citizen5);
         }
     }
 
@@ -74,7 +83,7 @@ public class CitizenService {
         familyMember.setFullName(citizen.getFullName());
         familyMember.setAMKA(citizen.getAMKA());
         familyMember.setMemberRelationship("-");
-        familyMember.setCitizen(citizen);
+        //familyMember.setCitizen(citizen);
 
         List<FamilyMember> fm = new ArrayList<>();
         fm.add(familyMember);

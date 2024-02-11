@@ -40,7 +40,7 @@ public class FamilyMemberController {
         if(citizen==null){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
         }
-        familyMember.setCitizen(citizen);
+        //familyMember.setCitizen(citizen);
 
         List<FamilyMember> allFamilyMembers = familyMemberService.getAllFamilyMembers();
         for(FamilyMember currFamMem : allFamilyMembers){
@@ -50,6 +50,7 @@ public class FamilyMemberController {
         }
 
         familyMemberService.saveFamilyMember(familyMember);
+        citizenService.updateCitizen(citizen);
         return ResponseEntity.ok(new MessageResponse("Family Member saved!"));
     }
 
@@ -113,10 +114,17 @@ public class FamilyMemberController {
 
         }
 
-        //Change FullName with citizen
-        if( familyMember.getCitizen().getAMKA().equals(familyMember.getAMKA()) ){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: You cannot delete the main Family Member!"));
+        List<Citizen> citizens = citizenService.getCitizens();
+        String fmAMKA = familyMember.getAMKA();
+        for(Citizen currCiti: citizens){
+            String citizenAMKA = currCiti.getAMKA();
+            if(citizenAMKA.equals(fmAMKA)){
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: You cannot delete the main Family Member!"));
+            }
         }
+        //Change FullName with citizen
+//        if( familyMember.getCitizen().getAMKA().equals(familyMember.getAMKA()) ){
+//        }
 
         //Deleting the member
         familyMemberService.deleteFamilyMember(familyMember_id);

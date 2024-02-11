@@ -1,12 +1,10 @@
 package ds.part1.FamilyDoctor.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
+@Table(	name = "requests")
 public class Request {
 
     @Id
@@ -15,7 +13,6 @@ public class Request {
 
     public enum status {unseen, rejected, accepted};
 
-    @NotBlank
     private String currentStatus;
 
     public void setId(Long id) {

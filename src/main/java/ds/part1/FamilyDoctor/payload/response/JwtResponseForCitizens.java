@@ -2,6 +2,7 @@ package ds.part1.FamilyDoctor.payload.response;
 
 import ds.part1.FamilyDoctor.entity.Doctor;
 import ds.part1.FamilyDoctor.entity.FamilyMember;
+import ds.part1.FamilyDoctor.entity.Request;
 
 import java.util.List;
 
@@ -13,10 +14,12 @@ public class JwtResponseForCitizens extends JwtResponseForUsers{
     private List<FamilyMember> familyMembers;
     private Doctor doctor;
 
+    private Request request;
+
     public JwtResponseForCitizens(String token, Long id, String fullName, String username, String email,
                                   String phoneNumber, String department, String prefecture, List<String> roles,
                                   String AMKA, String apartmentAddress, List<FamilyMember> familyMembers,
-                                  Doctor doctor) {
+                                  Doctor doctor, Request request) {
 
         super(token, id, fullName, username, email, phoneNumber, department, prefecture, roles);
 
@@ -24,6 +27,7 @@ public class JwtResponseForCitizens extends JwtResponseForUsers{
         this.apartmentAddress = apartmentAddress;
         this.familyMembers = familyMembers;
         this.doctor = doctor;
+        this.request = request;
     }
 
     public String getAMKA() {
@@ -56,6 +60,14 @@ public class JwtResponseForCitizens extends JwtResponseForUsers{
 
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
+    }
+
+    public Request getRequest() {
+        return request;
+    }
+
+    public void setRequest(Request request) {
+        this.request = request;
     }
 
     @Override

@@ -84,7 +84,8 @@ public class AuthController {
                             citizen.getAMKA(),
                             citizen.getApartmentAddress(),
                             citizen.getFamilyMembers(),
-                            citizen.getDoctor()));
+                            citizen.getDoctor(),
+                            citizen.getRequest()));
 
                 case "ROLE_DOCTOR":
 
@@ -105,7 +106,8 @@ public class AuthController {
                             doctor.getAppointmentsCompleted(),
                             doctor.getMaxNumberOfCitizens(),
                             doctor.getCitizens(),
-                            doctor.getAppointments()));
+                            doctor.getAppointments(),
+                            doctor.getRequests()));
 
                 case "ROLE_ADMIN":
 

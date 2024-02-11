@@ -53,6 +53,15 @@ public class DoctorController {
         return doctorService.getDoctors();
     }
 
+    @GetMapping("/{doctor_id}/requests")
+    public List<Request> getDoctorRequests(@PathVariable Long doctor_id){
+        List<Request> requests = doctorService.getDoctorRequests(doctor_id);
+        if(requests.isEmpty()){
+            return null;
+        }
+        return requests;
+    }
+
     @Secured("ROLE_ADMIN")
     @PostMapping("/new")
     public ResponseEntity<?> registerDoctor(@Valid @RequestBody Doctor doctor){
@@ -78,8 +87,6 @@ public class DoctorController {
         roles.add(doctorRole);
 
         doctor.setRoles(roles);
-        doctor.setAppointmentsCompleted(0);
-        doctor.setRating(0);
         doctorService.saveDoctor(doctor);
         return ResponseEntity.ok(new MessageResponse("Doctor saved!"));
     }
@@ -151,20 +158,12 @@ public class DoctorController {
 
     @GetMapping("/{doctor_id}/citizens")
     public List<Citizen> showCustomers(@PathVariable Long doctor_id){
-        Doctor doctor = doctorService.getDoctor(doctor_id);
-
-//        List<Citizen> citizens = new ArrayList<>();
-//        if(doctor==null){
-//            ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
-//        }else{
-//            citizens = doctorService.getDoctorCitizens(doctor_id);
-//        }
-//        return citizens;
-        if(doctor.getCitizens().isEmpty()){
+        List<Citizen> citizens = doctorService.getDoctorCitizens(doctor_id);
+        if(citizens.isEmpty()){
             return null;
         }
 
-        return doctor.getCitizens();
+        return citizens;
     }
 
     @GetMapping("/appointments/forDoctor:{doctor_id}")

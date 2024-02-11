@@ -1,15 +1,20 @@
 package ds.part1.FamilyDoctor.restController;
 
+import ds.part1.FamilyDoctor.entity.Citizen;
 import ds.part1.FamilyDoctor.entity.Doctor;
 import ds.part1.FamilyDoctor.service.AppointmentService;
 import ds.part1.FamilyDoctor.entity.Appointment;
 import ds.part1.FamilyDoctor.entity.FamilyMember;
 import ds.part1.FamilyDoctor.payload.response.MessageResponse;
+import ds.part1.FamilyDoctor.service.CitizenService;
 import ds.part1.FamilyDoctor.service.DoctorService;
 import ds.part1.FamilyDoctor.service.FamilyMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -21,6 +26,9 @@ public class AppointmentController {
 
     @Autowired
     private DoctorService doctorService;
+
+    @Autowired
+    private CitizenService citizenService;
 
     @Autowired
     private FamilyMemberService familyMemberService;
@@ -43,7 +51,23 @@ public class AppointmentController {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Family Member has already an active Appointment!"));
         }
 
-        Doctor doctor = familyMember.getCitizen().getDoctor();
+        Citizen citizen=null;
+
+        Long fmID = familyMember.getId();
+
+        List<Citizen> citizens = citizenService.getCitizens();
+        for(Citizen currCiti: citizens){
+            List<FamilyMember> familyMembers = currCiti.getFamilyMembers();
+            for(FamilyMember currFm: familyMembers){
+                if(currFm.getId().equals(fmID)){
+                    citizen=currCiti;
+                }
+            }
+        }
+
+
+
+        Doctor doctor = citizen.getDoctor();
         if(doctor==null){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Family of this Member doesn't have a family doctor!"));
         }
@@ -57,7 +81,7 @@ public class AppointmentController {
         appointment.setAMKA(familyMember.getAMKA());
         appointment.setDoctorName(doctor.getFullName());
         appointment.setCurrentStatus( Appointment.status.Set.toString() );
-        appointment.setCustomerName( ( familyMember.getCitizen() ).getFullName() );
+        appointment.setCustomerName(citizen.getFullName());
 
         appointmentService.saveAppointment(appointment);
 

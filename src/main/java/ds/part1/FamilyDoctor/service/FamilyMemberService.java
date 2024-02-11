@@ -27,23 +27,33 @@ public class FamilyMemberService {
         if (familyMemberRepository.count() <= citizenRepository.count()) {
 
             FamilyMember famMem1 = new FamilyMember("Mirto Vasileiou","01010100001","Wife");
-            Citizen citizen1 = citizenService.getCitizen(4L);
-            famMem1.setCitizen(citizen1);
+            FamilyMember famMem2 = new FamilyMember("Konstantina Katsiri","01010100002","Wife");
 
-            List<FamilyMember> fm = citizen1.getFamilyMembers();
-            fm.add(famMem1);
-            citizen1.setFamilyMembers(fm);
+            List<Citizen> citizens = citizenService.getCitizens();
+
+            if(citizens.isEmpty()){
+                return;
+            }
+
+            Citizen citizen1 = citizens.get(0);
+            Citizen citizen2 = citizens.get(1);
+
+            //famMem1.setCitizen(citizen1);
+            //famMem2.setCitizen(citizen2);
+
+            List<FamilyMember> fms1 = citizen1.getFamilyMembers();
+            List<FamilyMember> fms2 = citizen2.getFamilyMembers();
+
+            fms1.add(famMem1);
+            fms2.add(famMem2);
+
+            citizen1.setFamilyMembers(fms1);
+            citizen2.setFamilyMembers(fms2);
+
+            citizenService.updateCitizen(citizen1);
+            citizenService.updateCitizen(citizen2);
 
             familyMemberRepository.save(famMem1);
-
-            FamilyMember famMem2 = new FamilyMember("Konstantina Katsiri","01010100002","Wife");
-            Citizen citizen2 = citizenService.getCitizen(5L);
-            famMem2.setCitizen(citizen2);
-
-            List<FamilyMember> fm2 = citizen2.getFamilyMembers();
-            fm2.add(famMem2);
-            citizen2.setFamilyMembers(fm2);
-
             familyMemberRepository.save(famMem2);
         }
 

@@ -23,10 +23,10 @@ public class FamilyMember {
     @Size(max = 11)
     private String memberRelationship;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name="citizen_id")
-    private Citizen citizen;
+//    @JsonIgnore
+//    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+//    @JoinColumn(name="citizen_id")
+//    private Citizen citizen;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="appointment_id")
@@ -74,13 +74,13 @@ public class FamilyMember {
         this.memberRelationship = memberRelationship;
     }
 
-    public Citizen getCitizen() {
-        return citizen;
-    }
-
-    public void setCitizen(Citizen citizen) {
-        this.citizen = citizen;
-    }
+//    public Citizen getCitizen() {
+//        return citizen;
+//    }
+//
+//    public void setCitizen(Citizen citizen) {
+//        this.citizen = citizen;
+//    }
 
     public Appointment getAppointment() {
         return appointment;
