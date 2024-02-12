@@ -33,6 +33,21 @@ public class RequestController {
         return requestService.getRequest(request_id);
     }
 
+    @GetMapping("/{request_id}/citizen")
+    public Citizen getCitizenFromRequest(@PathVariable Long request_id){
+        List<Citizen> citizens = citizenService.getCitizens();
+        for(Citizen currCitizen: citizens){
+            if(currCitizen.getRequest()==null){
+                continue;
+            }
+            Long citizenRequestId = currCitizen.getRequest().getId();
+            if (citizenRequestId.equals(request_id)){
+                return currCitizen;
+            }
+        }
+        return null;
+    }
+
     @GetMapping("")
     public List<Request> getRequests(){
         return requestService.getRequests();
@@ -63,6 +78,76 @@ public class RequestController {
         doctorService.updateDoctor(doctor);
 
         return ResponseEntity.ok(new MessageResponse("Request created!"));
+    }
+
+    @PostMapping("/{request_id}/answer/{answer}")
+    public void DoctorAnswer(@PathVariable Long request_id, @PathVariable String answer){
+        Request request = requestService.getRequest(request_id);
+
+        String currStatus=Request.status.unseen.toString();
+
+        if(answer.equals("accept")){
+            currStatus = Request.status.accepted.toString();
+        }else if(answer.equals("reject")){
+            currStatus = Request.status.rejected.toString();
+        }
+
+        request.setCurrentStatus(currStatus);
+
+        requestService.updateRequest(request);
+
+        boolean doctorFound = false;
+        List<Doctor> allDoctors = doctorService.getDoctors();
+        Doctor doctor=null;
+        for (Doctor currDoctor: allDoctors){
+            List<Request> doctorRequests = currDoctor.getRequests();
+            if (doctorRequests.isEmpty()){
+                continue;
+            }
+            for (Request docReq: doctorRequests){
+                Long currReqId = docReq.getId();
+                if(currReqId.equals(request_id)){
+                    doctor = currDoctor;
+                    doctor.getRequests().remove(docReq);
+                    doctor.getRequests().add(request);
+                    doctorFound = true;
+                    break;
+                }
+            }
+            if (doctorFound){
+                break;
+            }
+        }
+
+        if(!doctorFound){
+            return;
+        }
+
+        boolean citizenFound = false;
+        List<Citizen> allCitizens = citizenService.getCitizens();
+        Citizen citizen=null;
+        for(Citizen currCitizen: allCitizens){
+            if(currCitizen.getRequest()==null){
+                continue;
+            }
+            Long citizenRequestId = currCitizen.getRequest().getId();
+            if (citizenRequestId.equals(request_id)){
+                citizen=currCitizen;
+                citizen.setRequest(request);
+                citizenFound = true;
+                break;
+            }
+        }
+
+        if(!citizenFound){
+            return;
+        }
+
+        doctor.getCitizens().add(citizen);
+        //doctorService.updateDoctor(doctor);
+
+        citizen.setDoctor(doctor);
+        //citizenService.updateCitizen(citizen);
     }
 
     @PostMapping("/change/status")
