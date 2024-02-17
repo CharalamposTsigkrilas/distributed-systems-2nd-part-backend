@@ -18,51 +18,6 @@ public class DoctorService {
     @Autowired
     private DoctorRepository doctorRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    @Transactional
-    public void createDefaultDoctors(){
-        if (doctorRepository.count() == 0) {
-            Doctor doctor1 = new Doctor("Iwannis Athanasiadis","doctor1",passwordEncoder.encode("1234"),"gatha@gmail.com","2100000123","Sterea Ellada", "Attiki","Kardiologos","Davaki 11, Kallithea");
-            Doctor doctor2 = new Doctor("Giorgos Alexopoulos","doctor2",passwordEncoder.encode("1234"),"galexop@gmail.com","2100000321","Sterea Ellada", "Evia","Pathologos","Makri Ippokratis 35, Nea Artaki Evia");
-            Doctor doctor3 = new Doctor("Hrw Alexandrou","doctor3",passwordEncoder.encode("1234"),"halexandrou@gmail.com","2100000333","Kriti", "Xania","Kardiologos","Ethnikis Antistaseos, Neapoli Lasithiou");
-            Doctor doctor4 = new Doctor("Mhltos Anastasiou","doctor4",passwordEncoder.encode("1234"),"manastasiou@gmail.com","2100000222","Makedonia", "Thessaloniki","Orila","Loutron 35, Lagadas Thessaloniki");
-            Doctor doctor5 = new Doctor("Nikoleta Ioannou","doctor5",passwordEncoder.encode("1234"),"nioanou@gmail.com","2100000111","Makedonia", "Kavala","Odontiatros","Papachristidis Fr. 119, Eleftheroupolis Kavala");
-
-            Set<Role> roles = new HashSet<>();
-
-            Role userRole = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-
-            Role doctorRole = roleRepository.findByName("ROLE_DOCTOR")
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(doctorRole);
-
-            doctor1.setRoles(roles);
-            doctor2.setRoles(roles);
-            doctor3.setRoles(roles);
-            doctor4.setRoles(roles);
-            doctor5.setRoles(roles);
-
-            doctor1.setMaxNumberOfCitizens(10);
-            doctor2.setMaxNumberOfCitizens(5);
-            doctor3.setMaxNumberOfCitizens(8);
-            doctor4.setMaxNumberOfCitizens(34);
-            doctor5.setMaxNumberOfCitizens(21);
-
-            saveDoctor(doctor1);
-            saveDoctor(doctor2);
-            saveDoctor(doctor3);
-            saveDoctor(doctor4);
-            saveDoctor(doctor5);
-        }
-    }
-
     @Transactional
     public Doctor getDoctor(Long doctorId) {
         return doctorRepository.findById(doctorId).get();

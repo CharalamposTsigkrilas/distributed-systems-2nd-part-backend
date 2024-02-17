@@ -19,42 +19,7 @@ public class FamilyMemberService {
     private FamilyMemberRepository familyMemberRepository;
 
     @Autowired
-    private CitizenRepository citizenRepository;
-
-    @Autowired
     private CitizenService citizenService;
-
-    @Transactional
-    public void createDefaultFamilyMembers(){
-        if (familyMemberRepository.count() <= citizenRepository.count()) {
-
-            FamilyMember famMem1 = new FamilyMember("Mirto Vasileiou","01010100001","Wife");
-            FamilyMember famMem2 = new FamilyMember("Konstantina Katsiri","01010100002","Wife");
-
-            List<Citizen> citizens = citizenService.getCitizens();
-
-            if(citizens.isEmpty()){
-                return;
-            }
-
-            Citizen citizen1 = citizens.get(0);
-            Citizen citizen2 = citizens.get(1);
-
-            citizen1.getFamilyMembers().add(famMem1);
-            citizen2.getFamilyMembers().add(famMem2);
-
-
-            citizen1.setFamilyMembers(citizen1.getFamilyMembers());
-            citizen2.setFamilyMembers(citizen2.getFamilyMembers());
-
-            citizenService.updateCitizen(citizen1);
-            citizenService.updateCitizen(citizen2);
-
-            familyMemberRepository.save(famMem1);
-            familyMemberRepository.save(famMem2);
-        }
-
-    }
 
     @Transactional
     public FamilyMember getFamilyMember(Long familyMemberId) {
