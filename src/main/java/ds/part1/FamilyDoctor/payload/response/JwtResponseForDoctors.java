@@ -15,7 +15,6 @@ public class JwtResponseForDoctors extends JwtResponseForUsers{
     private int maxNumberOfCitizens;
     private List<Citizen> citizens;
     private List<Appointment> appointments;
-
     private List<Request> requests;
 
     public JwtResponseForDoctors(String token, Long id, String fullName, String username, String email,

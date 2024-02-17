@@ -3,12 +3,9 @@ package ds.part1.FamilyDoctor.restController;
 import ds.part1.FamilyDoctor.entity.*;
 import ds.part1.FamilyDoctor.repository.RoleRepository;
 import ds.part1.FamilyDoctor.repository.UserRepository;
-import ds.part1.FamilyDoctor.service.AppointmentService;
+import ds.part1.FamilyDoctor.service.*;
 import ds.part1.FamilyDoctor.config.JwtUtils;
 import ds.part1.FamilyDoctor.payload.response.MessageResponse;
-import ds.part1.FamilyDoctor.service.CitizenService;
-import ds.part1.FamilyDoctor.service.DoctorService;
-import ds.part1.FamilyDoctor.service.FamilyMemberService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +33,9 @@ public class CitizenController {
 
     @Autowired
     private DoctorService doctorService;
+
+    @Autowired
+    private RequestService requestService;
 
     @Autowired
     private UserRepository userRepository;
@@ -95,10 +95,10 @@ public class CitizenController {
         }
 
         //Checking if the user is an adult by taking the 6 first numbers of AMKA and compare them with system's Date
-        String birthDatesString = citizen.getAMKA().substring(0, 6);
+        String birthDateString = citizen.getAMKA().substring(0, 6);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy");
-        LocalDate birthDate = LocalDate.parse(birthDatesString, formatter);
+        LocalDate birthDate = LocalDate.parse(birthDateString, formatter);
 
         LocalDate currentDate = LocalDate.now();
         long age = ChronoUnit.YEARS.between(birthDate, currentDate);
@@ -106,9 +106,9 @@ public class CitizenController {
         //Due to this date format 'ddMMyy', we can't calculate users that born before 2000.
         //So we add a 19 in years so format can be completed: 'ddMMyyyy' (ddMM19yy)
         if(age<0){
-            birthDatesString=birthDatesString.substring(0, 4)+"19"+birthDatesString.substring(4);
+            birthDateString=birthDateString.substring(0, 4)+"19"+birthDateString.substring(4);
             formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
-            birthDate = LocalDate.parse(birthDatesString, formatter);
+            birthDate = LocalDate.parse(birthDateString, formatter);
 
             currentDate = LocalDate.now();
             age = ChronoUnit.YEARS.between(birthDate, currentDate);
@@ -124,13 +124,16 @@ public class CitizenController {
     }
 
     @Secured("ROLE_ADMIN")
-    @GetMapping("/update/{citizen_id}")
-    public Citizen editCitizen(@RequestBody Citizen citizen, @PathVariable Long citizen_id){
+    @PostMapping("/{citizen_id}/update")
+    public ResponseEntity<?> editCitizen(@Valid @RequestBody Citizen citizen, @PathVariable Long citizen_id){
         Citizen updatedCitizen = citizenService.getCitizen(citizen_id);
 
-        if(updatedCitizen==null){
-            ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
+        if (updatedCitizen == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
         }
+
+        Doctor citizenDoctor = citizenService.getCitizenDoctor(citizen_id);
+
 
         updatedCitizen.setFullName(citizen.getFullName());
         updatedCitizen.setUsername(citizen.getUsername());
@@ -142,93 +145,93 @@ public class CitizenController {
         updatedCitizen.setAMKA(citizen.getAMKA());
         updatedCitizen.setApartmentAddress(citizen.getApartmentAddress());
 
+        if( citizenDoctor != null ) {
+            citizenDoctor.getCitizens().remove(citizen);
+            citizenDoctor.getCitizens().add(updatedCitizen);
+            doctorService.updateDoctor(citizenDoctor);
+        }
+
         citizenService.updateCitizen(updatedCitizen);
-        //ResponseEntity.ok(new MessageResponse("Citizen saved!"));
-        return updatedCitizen;
+        return ResponseEntity.ok(new MessageResponse("Citizen updated!"));
+
     }
 
     @Secured("ROLE_ADMIN")
-    @PostMapping("/delete/{citizen_id}")
+    @PostMapping("/{citizen_id}/delete")
     public ResponseEntity<?> deleteCitizen(@PathVariable Long citizen_id){
         Citizen citizen = citizenService.getCitizen(citizen_id);
 
-        if (citizen==null){
+        if (citizen == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
         }
 
         //Delete all the family members before deleting citizen
         List<FamilyMember> family = citizenService.getCitizenFamilyMembers(citizen_id);
-        for(FamilyMember member : family){
+        for(FamilyMember familyMember : family){
 
-            if(member.getAppointment()!=null){
-                Appointment memberAppointment = member.getAppointment();
-                Doctor doctorOfAppointment = memberAppointment.getDoctor();
-                List<Appointment> appointmentsOfDoctor = doctorOfAppointment.getAppointments();
+            if (familyMember.getAppointment() != null) {
+                Appointment familyMemberAppointment = familyMember.getAppointment();
+
+                Long familyMemberAppointmentId = familyMemberAppointment.getId();
+                Doctor appointmentDoctor = appointmentService.getAppointmentDoctor(familyMemberAppointmentId);
 
                 //Remove Appointment of each member from doctors
-                appointmentsOfDoctor.remove(memberAppointment);
+                appointmentDoctor.getAppointments().remove(familyMemberAppointment);
+                doctorService.updateDoctor(appointmentDoctor);
 
-                //Delete members' appointments
-//                memberAppointment.setDoctor(null);
-//                memberAppointment.setFamilyMember(null);
-                appointmentService.deleteAppointment(memberAppointment.getId());
+                familyMember.setAppointment(null);
+                appointmentService.deleteAppointment(familyMemberAppointmentId);
             }
 
+            //Remove family member from citizen
+            citizen.getFamilyMembers().remove(familyMember);
+            citizenService.updateCitizen(citizen);
+
             //Delete family member
-//            member.setCitizen(null);
-//            member.setAppointment(null);
-            familyMemberService.deleteFamilyMember(member.getId());
+            familyMemberService.deleteFamilyMember(familyMember.getId());
         }
 
         //Remove citizen from doctor
-        Doctor familyDoctor = citizen.getDoctor();
-        List<Citizen> doctorCitizens = familyDoctor.getCitizens();
-        doctorCitizens.remove(citizen);
+        Doctor citizenDoctor = citizenService.getCitizenDoctor(citizen_id);
+        if (citizenDoctor != null) {
+            citizenDoctor.getCitizens().remove(citizen);
+            doctorService.updateDoctor(citizenDoctor);
+        }
+
+        Request citizenRequest = citizenService.getCitizenRequest(citizen_id);
+        if (citizenRequest != null) {
+            citizen.setRequest(null);
+            citizenService.updateCitizen(citizen);
+
+            Long citizenRequestId = citizenRequest.getId();
+            Doctor requestDoctor = requestService.getRequestDoctor(citizenRequestId);
+            requestDoctor.getRequests().remove(citizenRequest);
+            doctorService.updateDoctor(requestDoctor);
+
+            requestService.deleteRequest(citizenRequestId);
+        }
 
         //Finally delete citizen
-//        citizen.setDoctor(null);
         citizenService.deleteCitizen(citizen_id);
         return ResponseEntity.ok(new MessageResponse("Citizen has been successfully deleted! " +
                 "Family members of them and their appointments also got deleted!"));
 
     }
 
-    @GetMapping("/family/forCitizen:{citizen_id}")
+    @GetMapping("/{citizen_id}/family")
     public List<FamilyMember> showFamily(@PathVariable Long citizen_id){
-        Citizen citizen = citizenService.getCitizen(citizen_id);
-        List<FamilyMember> family = null;
-        if(citizen==null){
-            ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
-        }else{
-            family = citizenService.getCitizenFamilyMembers(citizen_id);
-        }
-        return family;
+        return citizenService.getCitizenFamilyMembers(citizen_id);
     }
 
     @GetMapping("/{citizen_id}/doctor")
     public Doctor showDoctor(@PathVariable Long citizen_id){
-//        Citizen citizen = citizenService.getCitizen(citizen_id);
-
-//        if(citizen==null){
-//            ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
-//        }
-
-        Doctor doctor = citizenService.getCitizenDoctor(citizen_id);
-
-//        if(doctor==null){
-//            ResponseEntity.badRequest().body(new MessageResponse("Citizen doesn't have a family doctor!"));
-//        }
-        return doctor;
+        return citizenService.getCitizenDoctor(citizen_id);
     }
 
     @GetMapping("/{citizen_id}/nearby/doctors")
     public List<Doctor> showNearbyDoctors(@PathVariable Long citizen_id){
 
         Citizen citizen = citizenService.getCitizen(citizen_id);
-
-//        if(citizen==null){
-//            ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
-//        }
 
         //Checking all the doctors in the same prefecture as Citizen and add them in list that we return
         List<Doctor> allDoctors = doctorService.getDoctors();
@@ -251,45 +254,43 @@ public class CitizenController {
         return nearbyDoctors;
     }
 
-    @PostMapping("/request/fromCitizen:{citizen_id}/toDoctor:{doctor_id}")
-    public ResponseEntity<?> setFamilyDoctor(@PathVariable Long citizen_id, @PathVariable Long doctor_id){
-        Doctor doctor = doctorService.getDoctor(doctor_id);
-        Citizen citizen = citizenService.getCitizen(citizen_id);
-
-        if(doctor==null){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
-        }else if(citizen==null){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
-        }
-
-        if (citizen.getDoctor()!=null){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen already has a family doctor!"));
-        }
-
-        citizen.setDoctor(doctor);
-        doctor.getCitizens().add(citizen);
-
-        return ResponseEntity.ok(new MessageResponse("Doctor "+ doctor.getFullName()+" has been set as a family doctor" +
-                " for citizen "+citizen.getFullName()+" !"));
-    }
-
-    @PostMapping("/remove/family/doctor/fromCitizen:{citizen_id}")
+    @PostMapping("/{citizen_id}/remove/family/doctor")
     public ResponseEntity<?> removeDoctor(@PathVariable Long citizen_id){
-        Citizen citizen = citizenService.getCitizen(citizen_id);
 
-        if(citizen==null){
+        Citizen citizen = citizenService.getCitizen(citizen_id);
+        if (citizen == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
         }
 
-        if (citizen.getDoctor()==null){
+        Doctor citizenDoctor = citizenService.getCitizenDoctor(citizen_id);
+        if (citizenDoctor == null){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't have a family doctor!"));
         }
 
-        //First remove the citizen from Doctor's Citizen list
-        citizen.getDoctor().getCitizens().remove(citizen);
+        //Remove the citizen from Doctor's Citizen list
+        citizenDoctor.getCitizens().remove(citizen);
+        doctorService.saveDoctor(citizenDoctor);
 
-        //Then removing the doctor from Citizen
-        citizen.setDoctor(null);
+        List<FamilyMember> family = citizenService.getCitizenFamilyMembers(citizen_id);
+        for(FamilyMember familyMember : family){
+
+            if (familyMember.getAppointment() != null) {
+                Appointment familyMemberAppointment = familyMember.getAppointment();
+
+                Long familyMemberAppointmentId = familyMemberAppointment.getId();
+                Doctor appointmentDoctor = appointmentService.getAppointmentDoctor(familyMemberAppointmentId);
+
+                //Remove Appointment of each member from doctors
+                appointmentDoctor.getAppointments().remove(familyMemberAppointment);
+                doctorService.updateDoctor(appointmentDoctor);
+
+                familyMember.setAppointment(null);
+
+                familyMemberService.updateFamilyMember(familyMember);
+                appointmentService.deleteAppointment(familyMemberAppointmentId);
+            }
+
+        }
 
         return ResponseEntity.ok(new MessageResponse("Doctor has been removed from citizen "+citizen.getFullName()+" !"));
     }

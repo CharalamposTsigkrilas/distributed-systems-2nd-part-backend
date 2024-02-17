@@ -1,6 +1,6 @@
 package ds.part1.FamilyDoctor.service;
 
-import ds.part1.FamilyDoctor.entity.Request;
+import ds.part1.FamilyDoctor.entity.*;
 import ds.part1.FamilyDoctor.repository.RequestRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,12 @@ public class RequestService {
 
     @Autowired
     private RequestRepository requestRepository;
+
+    @Autowired
+    private CitizenService citizenService;
+
+    @Autowired
+    private DoctorService doctorService;
 
     @Transactional
     public Request getRequest(Long requestId){
@@ -39,4 +45,39 @@ public class RequestService {
     public void deleteRequest(Long requestId){
         requestRepository.deleteById(requestId);
     }
+
+    @Transactional
+    public Citizen getRequestCitizen(Long requestId){
+        List<Citizen> citizens = citizenService.getCitizens();
+
+        for (Citizen currentCitizen : citizens) {
+            Request currentCitizenRequest = currentCitizen.getRequest();
+            Long currentCitizenRequestId = currentCitizenRequest.getId();
+
+            if (currentCitizenRequestId.equals(requestId)) {
+                return currentCitizen;
+            }
+        }
+        return null;
+    }
+
+    @Transactional
+    public Doctor getRequestDoctor(Long requestId){
+        List<Doctor> doctors = doctorService.getDoctors();
+
+        for (Doctor currentDoctor : doctors) {
+            Long currentDoctorId = currentDoctor.getId();
+            List<Request> doctorRequests = doctorService.getDoctorRequests(currentDoctorId);
+
+            for (Request currentDoctorRequest : doctorRequests) {
+                Long currentDoctorRequestId = currentDoctorRequest.getId();
+
+                if (currentDoctorRequestId.equals(requestId)){
+                    return currentDoctor;
+                }
+            }
+        }
+        return null;
+    }
+
 }

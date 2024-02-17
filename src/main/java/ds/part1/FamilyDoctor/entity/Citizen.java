@@ -25,10 +25,6 @@ public class Citizen extends User{
     @JoinColumn(name="request_id")
     private Request request;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name="doctor_id")
-    private Doctor doctor;
-
     public Citizen(String fullName, String username, String password, String email, String phoneNumber,
                    String department, String prefecture, String AMKA, String apartmentAddress) {
 
@@ -154,14 +150,6 @@ public class Citizen extends User{
 
     public void setFamilyMembers(List<FamilyMember> familyMembers) {
         this.familyMembers = familyMembers;
-    }
-
-    public Doctor getDoctor() {
-        return doctor;
-    }
-
-    public void setDoctor(Doctor doctor) {
-        this.doctor = doctor;
     }
 
     public Request getRequest() {

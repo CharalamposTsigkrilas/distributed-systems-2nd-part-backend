@@ -23,11 +23,6 @@ public class FamilyMember {
     @Size(max = 11)
     private String memberRelationship;
 
-//    @JsonIgnore
-//    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-//    @JoinColumn(name="citizen_id")
-//    private Citizen citizen;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="appointment_id")
     private Appointment appointment;

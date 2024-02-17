@@ -81,13 +81,13 @@ public class DoctorService {
     }
 
     @Transactional
-    public void deleteDoctor(Long doctorId) {
-        doctorRepository.deleteById(doctorId);
+    public void updateDoctor(Doctor doctor){
+        doctorRepository.save(doctor);
     }
 
     @Transactional
-    public void updateDoctor(Doctor doctor){
-        doctorRepository.save(doctor);
+    public void deleteDoctor(Long doctorId) {
+        doctorRepository.deleteById(doctorId);
     }
 
     @Transactional

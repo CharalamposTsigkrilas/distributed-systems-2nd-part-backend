@@ -1,9 +1,6 @@
 package ds.part1.FamilyDoctor.service;
 
-import ds.part1.FamilyDoctor.entity.Citizen;
-import ds.part1.FamilyDoctor.entity.Doctor;
-import ds.part1.FamilyDoctor.entity.FamilyMember;
-import ds.part1.FamilyDoctor.entity.Role;
+import ds.part1.FamilyDoctor.entity.*;
 import ds.part1.FamilyDoctor.repository.CitizenRepository;
 import ds.part1.FamilyDoctor.repository.FamilyMemberRepository;
 import ds.part1.FamilyDoctor.repository.RoleRepository;
@@ -31,6 +28,9 @@ public class CitizenService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private DoctorService doctorService;
 
     @Transactional
     public void createDefaultCitizens(){
@@ -83,7 +83,6 @@ public class CitizenService {
         familyMember.setFullName(citizen.getFullName());
         familyMember.setAMKA(citizen.getAMKA());
         familyMember.setMemberRelationship("-");
-        //familyMember.setCitizen(citizen);
 
         List<FamilyMember> fm = new ArrayList<>();
         fm.add(familyMember);
@@ -95,19 +94,39 @@ public class CitizenService {
     }
 
     @Transactional
-    public void deleteCitizen(Long citizenId) {
-        citizenRepository.deleteById(citizenId);
-    }
-
-    @Transactional
     public void updateCitizen(Citizen citizen){
         citizenRepository.save(citizen);
     }
 
     @Transactional
+    public void deleteCitizen(Long citizenId) {
+        citizenRepository.deleteById(citizenId);
+    }
+
+    @Transactional
     public Doctor getCitizenDoctor(Long citizenId){
+
+        List<Doctor> doctors = doctorService.getDoctors();
+
+        for (Doctor currentDoctor : doctors){
+            Long currentDoctorId = currentDoctor.getId();
+            List<Citizen> doctorCitizens = doctorService.getDoctorCitizens(currentDoctorId);
+
+            for (Citizen currentCitizen : doctorCitizens) {
+                Long currentCitizenId = currentCitizen.getId();
+
+                if (currentCitizenId.equals(citizenId)){
+                    return currentDoctor;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Transactional
+    public Request getCitizenRequest(Long citizenId){
         Citizen citizen = citizenRepository.findById(citizenId).get();
-        return citizen.getDoctor();
+        return citizen.getRequest();
     }
 
     @Transactional

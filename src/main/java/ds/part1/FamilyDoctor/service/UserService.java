@@ -51,24 +51,5 @@ public class UserService {
 
         }
     }
-
-//    @Transactional
-//    public void updateUser(User user) {
-//        userRepository.save(user);
-//    }
-//
-//    @Transactional
-//    public List<User> getUsers() {
-//        return userRepository.findAll();
-//    }
-//
-//    @Transactional
-//    public User getUser(Long user_id) {
-//        return userRepository.findById(user_id).get();
-//    }
-//
-//    @Transactional
-//    public void deleteUser(Long user_id){
-//        userRepository.deleteById(user_id);
-//    }
+    
 }

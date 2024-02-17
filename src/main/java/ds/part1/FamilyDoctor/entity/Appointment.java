@@ -41,13 +41,6 @@ public class Appointment {
     @NotBlank
     private String currentStatus;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name="doctor_id")
-    private Doctor doctor;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="familyMember_id")
-    private FamilyMember familyMember;
 
     public Appointment() {
 
@@ -131,19 +124,4 @@ public class Appointment {
         this.currentStatus = currentStatus;
     }
 
-    public Doctor getDoctor() {
-        return doctor;
-    }
-
-    public void setDoctor(Doctor doctor) {
-        this.doctor = doctor;
-    }
-
-    public FamilyMember getFamilyMember() {
-        return familyMember;
-    }
-
-    public void setFamilyMember(FamilyMember familyMember) {
-        this.familyMember = familyMember;
-    }
 }

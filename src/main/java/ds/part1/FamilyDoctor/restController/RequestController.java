@@ -33,24 +33,14 @@ public class RequestController {
         return requestService.getRequest(request_id);
     }
 
-    @GetMapping("/{request_id}/citizen")
-    public Citizen getCitizenFromRequest(@PathVariable Long request_id){
-        List<Citizen> citizens = citizenService.getCitizens();
-        for(Citizen currCitizen: citizens){
-            if(currCitizen.getRequest()==null){
-                continue;
-            }
-            Long citizenRequestId = currCitizen.getRequest().getId();
-            if (citizenRequestId.equals(request_id)){
-                return currCitizen;
-            }
-        }
-        return null;
-    }
-
     @GetMapping("")
     public List<Request> getRequests(){
         return requestService.getRequests();
+    }
+
+    @GetMapping("/{request_id}/citizen")
+    public Citizen getCitizenFromRequest(@PathVariable Long request_id){
+        return requestService.getRequestCitizen(request_id);
     }
 
     @PostMapping("/new/from/citizen/{citizen_id}/to/doctor/{doctor_id}")
@@ -62,11 +52,22 @@ public class RequestController {
         Doctor doctor = doctorService.getDoctor(doctor_id);
 
         if (citizen==null){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Request Citizen not found!"));
         }
 
         if (doctor==null){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Request Doctor not found!"));
+        }
+
+        Request citizenRequest = citizen.getRequest();
+        if (citizenRequest != null ) {
+            String requestStatus = citizenRequest.getCurrentStatus();
+            if (requestStatus.equals(Request.status.accepted.toString())){
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen's previous Request has already been accepted by a Doctor!"));
+            }
+            if (requestStatus.equals(Request.status.unseen.toString())){
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen has already sent a Request to a Doctor!"));
+            }
         }
 
         requestService.saveRequest(request);
@@ -81,7 +82,7 @@ public class RequestController {
     }
 
     @PostMapping("/{request_id}/answer/{answer}")
-    public void DoctorAnswer(@PathVariable Long request_id, @PathVariable String answer){
+    public ResponseEntity<?> DoctorAnswer(@PathVariable Long request_id, @PathVariable String answer){
         Request request = requestService.getRequest(request_id);
 
         String currStatus=Request.status.unseen.toString();
@@ -92,66 +93,47 @@ public class RequestController {
             currStatus = Request.status.rejected.toString();
         }
 
+        Doctor requestDoctor = requestService.getRequestDoctor(request_id);
+        if (requestDoctor == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Request Doctor not found!"));
+        }
+        List<Request> doctorRequests = requestDoctor.getRequests();
+        List<Citizen> doctorCitizens = requestDoctor.getCitizens();
+
+        Citizen requestCitizen = requestService.getRequestCitizen(request_id);
+        if (requestCitizen == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Request Citizen not found!"));
+        }
+
+        Request citizenRequest = requestCitizen.getRequest();
+        if (citizenRequest == null ) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen Request not found!"));
+        }
+
+        String requestStatus = citizenRequest.getCurrentStatus();
+        if (!requestStatus.equals(Request.status.unseen.toString())){
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen's previous Request has already been answered by a Doctor!"));
+        }
+
+        doctorRequests.remove(request);
+
         request.setCurrentStatus(currStatus);
+
+        requestCitizen.setRequest(request);
+        citizenService.saveCitizen(requestCitizen);
+
+        doctorRequests.add(request);
+        if (currStatus.equals(Request.status.accepted.toString())) {
+            doctorCitizens.add(requestCitizen);
+        }
+        doctorService.updateDoctor(requestDoctor);
 
         requestService.updateRequest(request);
 
-        boolean doctorFound = false;
-        List<Doctor> allDoctors = doctorService.getDoctors();
-        Doctor doctor=null;
-        for (Doctor currDoctor: allDoctors){
-            List<Request> doctorRequests = currDoctor.getRequests();
-            if (doctorRequests.isEmpty()){
-                continue;
-            }
-            for (Request docReq: doctorRequests){
-                Long currReqId = docReq.getId();
-                if(currReqId.equals(request_id)){
-                    doctor = currDoctor;
-                    doctor.getRequests().remove(docReq);
-                    doctor.getRequests().add(request);
-                    doctorFound = true;
-                    break;
-                }
-            }
-            if (doctorFound){
-                break;
-            }
+        if (currStatus.equals(Request.status.accepted.toString())) {
+            return ResponseEntity.ok(new MessageResponse("Request accepted!"));
         }
-
-        if(!doctorFound){
-            return;
-        }
-
-        boolean citizenFound = false;
-        List<Citizen> allCitizens = citizenService.getCitizens();
-        Citizen citizen=null;
-        for(Citizen currCitizen: allCitizens){
-            if(currCitizen.getRequest()==null){
-                continue;
-            }
-            Long citizenRequestId = currCitizen.getRequest().getId();
-            if (citizenRequestId.equals(request_id)){
-                citizen=currCitizen;
-                citizen.setRequest(request);
-                citizenFound = true;
-                break;
-            }
-        }
-
-        if(!citizenFound){
-            return;
-        }
-
-        doctor.getCitizens().add(citizen);
-        //doctorService.updateDoctor(doctor);
-
-        citizen.setDoctor(doctor);
-        //citizenService.updateCitizen(citizen);
+        return ResponseEntity.ok(new MessageResponse("Request rejected!"));
     }
 
-    @PostMapping("/change/status")
-    public ResponseEntity<?> updateRequest (){
-        return ResponseEntity.ok(new MessageResponse("Request updated!"));
-    }
 }

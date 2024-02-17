@@ -84,7 +84,6 @@ public class AuthController {
                             citizen.getAMKA(),
                             citizen.getApartmentAddress(),
                             citizen.getFamilyMembers(),
-                            citizen.getDoctor(),
                             citizen.getRequest()));
 
                 case "ROLE_DOCTOR":

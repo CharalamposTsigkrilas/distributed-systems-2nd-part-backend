@@ -12,21 +12,19 @@ public class JwtResponseForCitizens extends JwtResponseForUsers{
 
     private String apartmentAddress;
     private List<FamilyMember> familyMembers;
-    private Doctor doctor;
 
     private Request request;
 
     public JwtResponseForCitizens(String token, Long id, String fullName, String username, String email,
                                   String phoneNumber, String department, String prefecture, List<String> roles,
                                   String AMKA, String apartmentAddress, List<FamilyMember> familyMembers,
-                                  Doctor doctor, Request request) {
+                                  Request request) {
 
         super(token, id, fullName, username, email, phoneNumber, department, prefecture, roles);
 
         this.AMKA = AMKA;
         this.apartmentAddress = apartmentAddress;
         this.familyMembers = familyMembers;
-        this.doctor = doctor;
         this.request = request;
     }
 
@@ -52,14 +50,6 @@ public class JwtResponseForCitizens extends JwtResponseForUsers{
 
     public void setFamilyMembers(List<FamilyMember> familyMembers) {
         this.familyMembers = familyMembers;
-    }
-
-    public Doctor getDoctor() {
-        return doctor;
-    }
-
-    public void setDoctor(Doctor doctor) {
-        this.doctor = doctor;
     }
 
     public Request getRequest() {

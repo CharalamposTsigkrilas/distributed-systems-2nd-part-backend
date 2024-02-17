@@ -3,10 +3,8 @@ package ds.part1.FamilyDoctor.restController;
 import ds.part1.FamilyDoctor.entity.*;
 import ds.part1.FamilyDoctor.repository.RoleRepository;
 import ds.part1.FamilyDoctor.repository.UserRepository;
-import ds.part1.FamilyDoctor.service.AppointmentService;
+import ds.part1.FamilyDoctor.service.*;
 import ds.part1.FamilyDoctor.payload.response.MessageResponse;
-import ds.part1.FamilyDoctor.service.CitizenService;
-import ds.part1.FamilyDoctor.service.DoctorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +30,12 @@ public class DoctorController {
 
     @Autowired
     private AppointmentService appointmentService;
+
+    @Autowired
+    private FamilyMemberService familyMemberService;
+
+    @Autowired
+    private RequestService requestService;
 
     @Autowired
     private UserRepository userRepository;
@@ -92,12 +96,12 @@ public class DoctorController {
     }
 
     @Secured("ROLE_ADMIN")
-    @GetMapping("/update/{doctor_id}")
-    public Doctor editDoctor(@RequestBody Doctor doctor, @PathVariable Long doctor_id){
-        Doctor updatedDoctor = doctorService.getDoctor(doctor_id);
+    @PostMapping("/{doctor_id}/update")
+    public ResponseEntity<?> editDoctor(@Valid @RequestBody Doctor doctor, @PathVariable Long doctor_id){
 
+        Doctor updatedDoctor = doctorService.getDoctor(doctor_id);
         if(updatedDoctor==null){
-            ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
         }
 
         updatedDoctor.setFullName(doctor.getFullName());
@@ -114,40 +118,48 @@ public class DoctorController {
         updatedDoctor.setMaxNumberOfCitizens(doctor.getMaxNumberOfCitizens());
 
         doctorService.updateDoctor(updatedDoctor);
-        //ResponseEntity.ok(new MessageResponse("Doctor saved!"));
-        return updatedDoctor;
+        return ResponseEntity.ok(new MessageResponse("Doctor updated!"));
+
     }
 
     @Secured("ROLE_ADMIN")
-    @PostMapping("/delete/{doctor_id}")
+    @PostMapping("/{doctor_id}/delete")
     public ResponseEntity<?> deleteDoctor(@PathVariable Long doctor_id){
-        Doctor doctor = doctorService.getDoctor(doctor_id);
 
+        Doctor doctor = doctorService.getDoctor(doctor_id);
         if (doctor==null){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
         }
 
-        //Remove doctor from all the citizens before deleting doctor
-        List<Citizen> customers = doctorService.getDoctorCitizens(doctor_id);
-        for(Citizen cit : customers){
+        //Remove appointments from fam members
+        List<Appointment> doctorAppointments = doctorService.getDoctorAppointments(doctor_id);
+        for(Appointment currentAppointment : doctorAppointments){
+            Long appointmentId = currentAppointment.getId();
+            FamilyMember appointmentFamilyMember = appointmentService.getAppointmentFamilyMember(appointmentId);
 
-            //Remove doctor from each citizen
-            cit.setDoctor(null);
-//            customers.remove(cit);
+            //Remove appointment from family member
+            appointmentFamilyMember.setAppointment(null);
+            familyMemberService.updateFamilyMember(appointmentFamilyMember);
+
+            //Delete doctor appointment
+            doctorAppointments.remove(currentAppointment);
+            doctorService.updateDoctor(doctor);
+
+            appointmentService.deleteAppointment(appointmentId);
         }
 
-        //Remove appointments from fam members
-        List<Appointment> doctorAppointments = doctor.getAppointments();
-        for(Appointment appo : doctorAppointments){
+        List<Request> doctorRequests = doctorService.getDoctorRequests(doctor_id);
+        for (Request currentRequest : doctorRequests) {
+            Long currentRequestId = currentRequest.getId();
+            Citizen requestCitizen = requestService.getRequestCitizen(currentRequestId);
 
-            FamilyMember famMembersOfAppo = appo.getFamilyMember();
-            famMembersOfAppo.setAppointment(null);
+            requestCitizen.setRequest(null);
+            citizenService.updateCitizen(requestCitizen);
 
-            //Delete appointment
-//            appo.setDoctor(null);
-//            appo.setFamilyMember(null);
-//            doctorAppointments.remove(appo);
-            appointmentService.deleteAppointment(appo.getId());
+            doctorRequests.remove(currentRequest);
+            doctorService.updateDoctor(doctor);
+
+            requestService.deleteRequest(currentRequestId);
         }
 
         //Finally delete doctor
@@ -162,24 +174,19 @@ public class DoctorController {
         if(citizens.isEmpty()){
             return null;
         }
-
         return citizens;
     }
 
-    @GetMapping("/appointments/forDoctor:{doctor_id}")
+    @GetMapping("/{doctor_id}/appointments")
     public List<Appointment> showDoctorAppointments(@PathVariable Long doctor_id){
-        Doctor doctor = doctorService.getDoctor(doctor_id);
-
-        List<Appointment> appointments = null;
-        if(doctor==null){
-            ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
-        }else{
-            appointments = doctorService.getDoctorAppointments(doctor_id);
+        List<Appointment> appointments = doctorService.getDoctorAppointments(doctor_id);
+        if (appointments.isEmpty()) {
+            return null;
         }
         return appointments;
     }
 
-    @PostMapping("/remove/fromDoctor:{doctor_id}/citizen:{citizen_id}")
+    @PostMapping("/{doctor_id}/remove/citizen/{citizen_id}")
     public ResponseEntity<?> removeCitizen(@PathVariable Long citizen_id, @PathVariable Long doctor_id){
 
         Doctor doctor = doctorService.getDoctor(doctor_id);
@@ -187,43 +194,41 @@ public class DoctorController {
 
         if(doctor==null){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
-        }else if(citizen==null){
+        }
+        if(citizen==null){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
         }
 
-        if(!doctor.getCitizens().contains(citizen)){
+        List<Citizen> doctorCitizens = doctorService.getDoctorCitizens(doctor_id);
+        if(!doctorCitizens.contains(citizen)){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't have this Citizen on his list!"));
         }
 
-        //First remove the citizen from Doctor's Citizen list
-        citizen.getDoctor().getCitizens().remove(citizen);
+        //Remove the citizen from Doctor's Citizen list
+        doctorCitizens.remove(citizen);
+        doctorService.updateDoctor(doctor);
 
-        //Then removing the doctor from Citizen
-        citizen.setDoctor(null);
+        List<FamilyMember> citizenFamilyMembersFamilyMember = citizenService.getCitizenFamilyMembers(citizen_id);
+        for(FamilyMember familyMember : citizenFamilyMembersFamilyMember){
+
+            if (familyMember.getAppointment() != null) {
+                Appointment familyMemberAppointment = familyMember.getAppointment();
+
+                Long familyMemberAppointmentId = familyMemberAppointment.getId();
+
+                //Remove Appointment of each member from doctors
+                doctor.getAppointments().remove(familyMemberAppointment);
+                doctorService.updateDoctor(doctor);
+
+                familyMember.setAppointment(null);
+
+                familyMemberService.updateFamilyMember(familyMember);
+                appointmentService.deleteAppointment(familyMemberAppointmentId);
+            }
+
+        }
 
         return ResponseEntity.ok(new MessageResponse("Citizen "+citizen.getFullName()+" has been removed!"));
-    }
-
-    @PostMapping("/accept/request/fromDoctor:{doctor_id}/forCitizen:{citizen_id}")
-    public ResponseEntity<?> setFamilyDoctor(@PathVariable Long citizen_id, @PathVariable Long doctor_id){
-        Doctor doctor = doctorService.getDoctor(doctor_id);
-        Citizen citizen = citizenService.getCitizen(citizen_id);
-
-        if(doctor==null){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
-        }else if(citizen==null){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
-        }
-
-        if (citizen.getDoctor()!=null){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen already has a family doctor!"));
-        }
-
-        citizen.setDoctor(doctor);
-        doctor.getCitizens().add(citizen);
-
-        return ResponseEntity.ok(new MessageResponse("Doctor "+ doctor.getFullName()+" has been set as a family doctor" +
-                " for citizen "+citizen.getFullName()+" !"));
     }
 
 }
