@@ -120,7 +120,7 @@ public class RequestController {
         request.setCurrentStatus(currStatus);
 
         requestCitizen.setRequest(request);
-        citizenService.saveCitizen(requestCitizen);
+        citizenService.updateCitizen(requestCitizen);
 
         doctorRequests.add(request);
         if (currStatus.equals(Request.status.accepted.toString())) {

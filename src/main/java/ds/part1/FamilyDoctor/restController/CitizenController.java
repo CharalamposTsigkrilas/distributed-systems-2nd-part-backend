@@ -228,6 +228,11 @@ public class CitizenController {
         return citizenService.getCitizenDoctor(citizen_id);
     }
 
+    @GetMapping("/{citizen_id}/request")
+    public Request showRequest(@PathVariable Long citizen_id){
+        return citizenService.getCitizenRequest(citizen_id);
+    }
+
     @GetMapping("/{citizen_id}/nearby/doctors")
     public List<Doctor> showNearbyDoctors(@PathVariable Long citizen_id){
 

@@ -52,11 +52,15 @@ public class RequestService {
 
         for (Citizen currentCitizen : citizens) {
             Request currentCitizenRequest = currentCitizen.getRequest();
-            Long currentCitizenRequestId = currentCitizenRequest.getId();
 
-            if (currentCitizenRequestId.equals(requestId)) {
-                return currentCitizen;
+            if (currentCitizenRequest != null) {
+                Long currentCitizenRequestId = currentCitizenRequest.getId();
+
+                if (currentCitizenRequestId.equals(requestId)) {
+                    return currentCitizen;
+                }
             }
+
         }
         return null;
     }

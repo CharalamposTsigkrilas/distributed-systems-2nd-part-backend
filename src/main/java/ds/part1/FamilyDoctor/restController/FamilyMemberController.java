@@ -34,7 +34,7 @@ public class FamilyMemberController {
     @Autowired
     private DoctorService doctorService;
 
-    @PostMapping("/new/for/Citizen/{citizen_id}")
+    @PostMapping("/new/for/citizen/{citizen_id}")
     public ResponseEntity<?> saveFamilyMember(@Valid @RequestBody FamilyMember familyMember, @PathVariable Long citizen_id){
 
         Citizen citizen = citizenService.getCitizen(citizen_id);
@@ -48,6 +48,8 @@ public class FamilyMemberController {
                 return ResponseEntity.badRequest().body(new MessageResponse("Family Member already exists!"));
             }
         }
+
+        citizen.getFamilyMembers().add(familyMember);
 
         familyMemberService.saveFamilyMember(familyMember);
         citizenService.updateCitizen(citizen);
