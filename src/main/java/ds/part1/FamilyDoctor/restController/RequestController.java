@@ -43,6 +43,11 @@ public class RequestController {
         return requestService.getRequestCitizen(request_id);
     }
 
+    @GetMapping("/{request_id}/doctor")
+    public Doctor getDoctorFromRequest(@PathVariable Long request_id){
+        return requestService.getRequestDoctor(request_id);
+    }
+
     @PostMapping("/new/from/citizen/{citizen_id}/to/doctor/{doctor_id}")
     public ResponseEntity<?> createRequest(@PathVariable Long citizen_id, @PathVariable Long doctor_id){
 

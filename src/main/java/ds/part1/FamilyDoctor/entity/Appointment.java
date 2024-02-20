@@ -28,12 +28,9 @@ public class Appointment {
     @Pattern(regexp = "\\d{11}")
     private String AMKA;
 
-    @NotBlank
+    @NotNull
     private String doctorName;
 
-    //1 to 5
-    @NotBlank
-    @Size(max = 1)
     private int evaluationGrade;
 
     public enum status {Set, Completed, Canceled, Changed};

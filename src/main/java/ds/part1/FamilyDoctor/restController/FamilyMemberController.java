@@ -34,6 +34,11 @@ public class FamilyMemberController {
     @Autowired
     private DoctorService doctorService;
 
+    @GetMapping("/{familyMember_id}/appointment")
+    public Appointment getFamilyMemberAppointment(@PathVariable Long familyMember_id){
+        return familyMemberService.getFamilyMemberAppointment(familyMember_id);
+    }
+
     @PostMapping("/new/for/citizen/{citizen_id}")
     public ResponseEntity<?> saveFamilyMember(@Valid @RequestBody FamilyMember familyMember, @PathVariable Long citizen_id){
 

@@ -42,7 +42,7 @@ public class AppointmentController {
     }
 
     @PostMapping("/new/for/FamilyMember/{familyMember_id}")
-    public ResponseEntity<?> saveAppointment(@Valid @RequestBody Appointment appointment, @PathVariable Long familyMember_id ){
+    public ResponseEntity<?> saveAppointment(@RequestBody Appointment appointment, @PathVariable Long familyMember_id ){
 
         //Find doctor and family member for ids given for the appointment
         FamilyMember familyMember = familyMemberService.getFamilyMember(familyMember_id);
@@ -75,13 +75,13 @@ public class AppointmentController {
         appointment.setDoctorName(doctor.getFullName());
         appointment.setCustomerName(citizen.getFullName());
 
+        appointmentService.saveAppointment(appointment);
+
         familyMember.setAppointment(appointment);
         familyMemberService.updateFamilyMember(familyMember);
 
         doctor.getAppointments().add(appointment);
         doctorService.updateDoctor(doctor);
-
-        appointmentService.saveAppointment(appointment);
 
         return ResponseEntity.ok(new MessageResponse("Appointment has been saved!"));
     }

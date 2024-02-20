@@ -186,8 +186,8 @@ public class InitialDataService {
             citizen1FamilyMembers.add(famMem1);
             citizen2FamilyMembers.add(famMem2);
 
-            citizen1.setFamilyMembers(citizen1.getFamilyMembers());
-            citizen2.setFamilyMembers(citizen2.getFamilyMembers());
+            citizen1.setFamilyMembers(citizen1FamilyMembers);
+            citizen2.setFamilyMembers(citizen2FamilyMembers);
 
             citizenService.updateCitizen(citizen1);
             citizenService.updateCitizen(citizen2);

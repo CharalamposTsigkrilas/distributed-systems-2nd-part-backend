@@ -35,6 +35,7 @@ public class AppointmentService {
     @Transactional
     public void saveAppointment(Appointment appointment){
         appointment.setCurrentStatus(Appointment.status.Set.toString());
+        appointment.setEvaluationGrade(0);
         appointmentRepository.save(appointment);
     }
 
