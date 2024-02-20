@@ -141,4 +141,44 @@ public class RequestController {
         return ResponseEntity.ok(new MessageResponse("Request rejected!"));
     }
 
+    @PostMapping("/{request_id}/delete")
+    public ResponseEntity<?> cancelRequest(@PathVariable Long request_id){
+
+        Request request = requestService.getRequest(request_id);
+        if (request == null){
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Request not found!"));
+        }
+        String status = request.getCurrentStatus();
+
+        if(status.equals(Request.status.accepted.toString()) || status.equals(Request.status.rejected.toString())){
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen's Request cannot be canceled! It has already been answered by a Doctor!"));
+        }
+
+        Doctor requestDoctor = requestService.getRequestDoctor(request_id);
+        if (requestDoctor == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Request Doctor not found!"));
+        }
+        List<Request> doctorRequests = requestDoctor.getRequests();
+
+        Citizen requestCitizen = requestService.getRequestCitizen(request_id);
+        if (requestCitizen == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Request Citizen not found!"));
+        }
+
+        Request citizenRequest = requestCitizen.getRequest();
+        if (citizenRequest == null ) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen Request not found!"));
+        }
+
+        doctorRequests.remove(request);
+
+        requestCitizen.setRequest(null);
+        citizenService.updateCitizen(requestCitizen);
+
+        doctorService.updateDoctor(requestDoctor);
+
+        requestService.deleteRequest(request_id);
+
+        return ResponseEntity.ok(new MessageResponse("Request deleted!"));
+    }
 }

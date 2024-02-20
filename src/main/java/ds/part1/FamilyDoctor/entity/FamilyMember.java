@@ -69,14 +69,6 @@ public class FamilyMember {
         this.memberRelationship = memberRelationship;
     }
 
-//    public Citizen getCitizen() {
-//        return citizen;
-//    }
-//
-//    public void setCitizen(Citizen citizen) {
-//        this.citizen = citizen;
-//    }
-
     public Appointment getAppointment() {
         return appointment;
     }

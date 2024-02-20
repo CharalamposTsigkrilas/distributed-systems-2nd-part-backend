@@ -191,6 +191,7 @@ public class DoctorController {
 
         Doctor doctor = doctorService.getDoctor(doctor_id);
         Citizen citizen = citizenService.getCitizen(citizen_id);
+        Request request = citizenService.getCitizenRequest(citizen_id);
 
         if(doctor==null){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't exists!"));
@@ -198,14 +199,20 @@ public class DoctorController {
         if(citizen==null){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen doesn't exists!"));
         }
+        if (request == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Request not found!"));
+        }
 
         List<Citizen> doctorCitizens = doctorService.getDoctorCitizens(doctor_id);
         if(!doctorCitizens.contains(citizen)){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Doctor doesn't have this Citizen on his list!"));
         }
 
+        List<Request> doctorRequests = doctorService.getDoctorRequests(doctor_id);
+
         //Remove the citizen from Doctor's Citizen list
         doctorCitizens.remove(citizen);
+        doctorRequests.remove(request);
         doctorService.updateDoctor(doctor);
 
         List<FamilyMember> citizenFamilyMembersFamilyMember = citizenService.getCitizenFamilyMembers(citizen_id);
@@ -227,6 +234,12 @@ public class DoctorController {
             }
 
         }
+
+        citizen.setRequest(null);
+        citizenService.updateCitizen(citizen);
+
+        Long requestId = request.getId();
+        requestService.deleteRequest(requestId);
 
         return ResponseEntity.ok(new MessageResponse("Citizen "+citizen.getFullName()+" has been removed!"));
     }

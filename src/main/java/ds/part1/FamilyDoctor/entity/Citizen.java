@@ -17,7 +17,7 @@ public class Citizen extends User{
     @Size(max = 50)
     private String apartmentAddress;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "citizen_family_members")
     private List<FamilyMember> familyMembers;
 

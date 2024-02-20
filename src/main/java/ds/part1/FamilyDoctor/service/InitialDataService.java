@@ -180,8 +180,8 @@ public class InitialDataService {
             Citizen citizen1 = citizens.get(0);
             Citizen citizen2 = citizens.get(1);
 
-            List<FamilyMember> citizen1FamilyMembers = new ArrayList<>();
-            List<FamilyMember> citizen2FamilyMembers = new ArrayList<>();
+            List<FamilyMember> citizen1FamilyMembers = citizen1.getFamilyMembers();
+            List<FamilyMember> citizen2FamilyMembers = citizen2.getFamilyMembers();
 
             citizen1FamilyMembers.add(famMem1);
             citizen2FamilyMembers.add(famMem2);
