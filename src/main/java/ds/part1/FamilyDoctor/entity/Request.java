@@ -4,14 +4,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(	name = "requests")
+@Table(name = "requests")
 public class Request {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public enum status {unseen, rejected, accepted};
+    public enum status {
+        unseen, rejected, accepted
+    };
 
     private String currentStatus;
 

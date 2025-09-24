@@ -6,10 +6,10 @@ import ds.part1.FamilyDoctor.entity.Request;
 
 import java.util.List;
 
-public class JwtResponseForDoctors extends JwtResponseForUsers{
+public class JwtResponseForDoctors extends JwtResponseForUsers {
 
     private String specialty;
-    private String doctorOfficeAddress;
+    private String officeAddress;
     private float rating;
     private int appointmentsCompleted;
     private int maxNumberOfCitizens;
@@ -18,15 +18,15 @@ public class JwtResponseForDoctors extends JwtResponseForUsers{
     private List<Request> requests;
 
     public JwtResponseForDoctors(String token, Long id, String fullName, String username, String email,
-                                 String phoneNumber, String department, String prefecture, List<String> roles,
-                                 String specialty, String doctorOfficeAddress, float rating, int appointmentsCompleted,
-                                 int maxNumberOfCitizens, List<Citizen> citizens, List<Appointment> appointments,
-                                 List<Request> requests) {
+            String phoneNumber, String department, String prefecture, List<String> roles,
+            String specialty, String officeAddress, float rating, int appointmentsCompleted,
+            int maxNumberOfCitizens, List<Citizen> citizens, List<Appointment> appointments,
+            List<Request> requests) {
 
         super(token, id, fullName, username, email, phoneNumber, department, prefecture, roles);
 
         this.specialty = specialty;
-        this.doctorOfficeAddress = doctorOfficeAddress;
+        this.officeAddress = officeAddress;
         this.rating = rating;
         this.appointmentsCompleted = appointmentsCompleted;
         this.maxNumberOfCitizens = maxNumberOfCitizens;
@@ -118,12 +118,12 @@ public class JwtResponseForDoctors extends JwtResponseForUsers{
         this.specialty = specialty;
     }
 
-    public String getDoctorOfficeAddress() {
-        return doctorOfficeAddress;
+    public String getOfficeAddress() {
+        return officeAddress;
     }
 
-    public void setDoctorOfficeAddress(String doctorOfficeAddress) {
-        this.doctorOfficeAddress = doctorOfficeAddress;
+    public void setOfficeAddress(String officeAddress) {
+        this.officeAddress = officeAddress;
     }
 
     public float getRating() {

@@ -67,7 +67,7 @@ public class AuthController {
 
         Long userId = userDetails.getId();
 
-        for(String userRoles:roles){
+        for (String userRoles : roles) {
             switch (userRoles) {
                 case "ROLE_CITIZEN":
 
@@ -100,7 +100,7 @@ public class AuthController {
                             doctor.getPrefecture(),
                             roles,
                             doctor.getSpecialty(),
-                            doctor.getDoctorOfficeAddress(),
+                            doctor.getOfficeAddress(),
                             doctor.getRating(),
                             doctor.getAppointmentsCompleted(),
                             doctor.getMaxNumberOfCitizens(),

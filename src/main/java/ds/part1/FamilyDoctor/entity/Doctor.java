@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-public class Doctor extends User{
+public class Doctor extends User {
 
     @NotBlank
     @Size(max = 50)
@@ -15,7 +15,7 @@ public class Doctor extends User{
 
     @NotBlank
     @Size(max = 50)
-    private String doctorOfficeAddress;
+    private String officeAddress;
 
     private float rating;
 
@@ -36,11 +36,11 @@ public class Doctor extends User{
     private List<Request> requests;
 
     public Doctor(String fullName, String username, String password, String email, String phoneNumber,
-                  String department, String prefecture, String specialty, String doctorOfficeAddress) {
+            String department, String prefecture, String specialty, String officeAddress) {
         super(fullName, username, password, email, phoneNumber, department, prefecture);
 
         this.specialty = specialty;
-        this.doctorOfficeAddress = doctorOfficeAddress;
+        this.officeAddress = officeAddress;
     }
 
     public Doctor() {
@@ -145,12 +145,12 @@ public class Doctor extends User{
         this.specialty = specialty;
     }
 
-    public String getDoctorOfficeAddress() {
-        return doctorOfficeAddress;
+    public String getOfficeAddress() {
+        return officeAddress;
     }
 
-    public void setDoctorOfficeAddress(String doctorOfficeAddress) {
-        this.doctorOfficeAddress = doctorOfficeAddress;
+    public void setOfficeAddress(String officeAddress) {
+        this.officeAddress = officeAddress;
     }
 
     public float getRating() {

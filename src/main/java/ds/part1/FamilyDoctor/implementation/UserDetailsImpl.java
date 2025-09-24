@@ -33,8 +33,8 @@ public class UserDetailsImpl implements UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(Long id, String fullName, String username, String password, String email,
-                           String phoneNumber, String department, String prefecture,
-                           Collection<? extends GrantedAuthority> authorities) {
+            String phoneNumber, String department, String prefecture,
+            Collection<? extends GrantedAuthority> authorities) {
 
         this.id = id;
         this.fullName = fullName;

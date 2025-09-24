@@ -32,22 +32,22 @@ public class FamilyMemberService {
     }
 
     @Transactional
-    public void saveFamilyMember(FamilyMember familyMember){
+    public void saveFamilyMember(FamilyMember familyMember) {
         familyMemberRepository.save(familyMember);
     }
 
     @Transactional
-    public void updateFamilyMember(FamilyMember familyMember){
+    public void updateFamilyMember(FamilyMember familyMember) {
         familyMemberRepository.save(familyMember);
     }
 
     @Transactional
-    public void deleteFamilyMember(Long familyMemberId){
+    public void deleteFamilyMember(Long familyMemberId) {
         familyMemberRepository.deleteById(familyMemberId);
     }
 
     @Transactional
-    public Citizen getFamilyMemberCitizen(Long familyMemberId){
+    public Citizen getFamilyMemberCitizen(Long familyMemberId) {
 
         List<Citizen> citizens = citizenService.getCitizens();
 
@@ -55,7 +55,7 @@ public class FamilyMemberService {
             Long currentCitizenId = currentCitizen.getId();
             List<FamilyMember> citizenFamilyMembers = citizenService.getCitizenFamilyMembers(currentCitizenId);
 
-            for (FamilyMember currentFamilyMember : citizenFamilyMembers){
+            for (FamilyMember currentFamilyMember : citizenFamilyMembers) {
                 Long currentFamilyMemberId = currentFamilyMember.getId();
 
                 if (currentFamilyMemberId.equals(familyMemberId)) {
@@ -67,14 +67,14 @@ public class FamilyMemberService {
     }
 
     @Transactional
-    public Doctor getFamilyMemberDoctor(Long familyMemberId){
+    public Doctor getFamilyMemberDoctor(Long familyMemberId) {
         Citizen citizen = getFamilyMemberCitizen(familyMemberId);
         Long citizenId = citizen.getId();
         return citizenService.getCitizenDoctor(citizenId);
     }
 
     @Transactional
-    public Appointment getFamilyMemberAppointment(Long familyMemberId){
+    public Appointment getFamilyMemberAppointment(Long familyMemberId) {
         FamilyMember familyMember = familyMemberRepository.findById(familyMemberId).get();
         return familyMember.getAppointment();
     }

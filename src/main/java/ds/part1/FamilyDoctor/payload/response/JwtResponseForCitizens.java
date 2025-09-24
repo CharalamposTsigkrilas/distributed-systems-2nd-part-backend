@@ -6,7 +6,7 @@ import ds.part1.FamilyDoctor.entity.Request;
 
 import java.util.List;
 
-public class JwtResponseForCitizens extends JwtResponseForUsers{
+public class JwtResponseForCitizens extends JwtResponseForUsers {
 
     private String AMKA;
 
@@ -16,9 +16,9 @@ public class JwtResponseForCitizens extends JwtResponseForUsers{
     private Request request;
 
     public JwtResponseForCitizens(String token, Long id, String fullName, String username, String email,
-                                  String phoneNumber, String department, String prefecture, List<String> roles,
-                                  String AMKA, String apartmentAddress, List<FamilyMember> familyMembers,
-                                  Request request) {
+            String phoneNumber, String department, String prefecture, List<String> roles,
+            String AMKA, String apartmentAddress, List<FamilyMember> familyMembers,
+            Request request) {
 
         super(token, id, fullName, username, email, phoneNumber, department, prefecture, roles);
 

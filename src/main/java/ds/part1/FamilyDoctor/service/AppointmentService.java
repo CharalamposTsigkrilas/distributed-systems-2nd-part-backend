@@ -33,7 +33,7 @@ public class AppointmentService {
     }
 
     @Transactional
-    public void saveAppointment(Appointment appointment){
+    public void saveAppointment(Appointment appointment) {
         appointment.setCurrentStatus(Appointment.status.Set.toString());
         appointment.setEvaluationGrade(0);
         appointmentRepository.save(appointment);
@@ -45,12 +45,12 @@ public class AppointmentService {
     }
 
     @Transactional
-    public void deleteAppointment(Long appointment_id){
+    public void deleteAppointment(Long appointment_id) {
         appointmentRepository.deleteById(appointment_id);
     }
 
     @Transactional
-    public FamilyMember getAppointmentFamilyMember(Long appointment_id){
+    public FamilyMember getAppointmentFamilyMember(Long appointment_id) {
         List<FamilyMember> familyMembers = familyMemberService.getFamilyMembers();
 
         for (FamilyMember currentFamilyMember : familyMembers) {
@@ -65,7 +65,7 @@ public class AppointmentService {
     }
 
     @Transactional
-    public Doctor getAppointmentDoctor(Long appointment_id){
+    public Doctor getAppointmentDoctor(Long appointment_id) {
         List<Doctor> doctors = doctorService.getDoctors();
 
         for (Doctor currentDoctor : doctors) {
@@ -75,7 +75,7 @@ public class AppointmentService {
             for (Appointment currentDoctorAppointment : doctorAppointments) {
                 Long currentDoctorAppointmentId = currentDoctorAppointment.getId();
 
-                if (currentDoctorAppointmentId.equals(appointment_id)){
+                if (currentDoctorAppointmentId.equals(appointment_id)) {
                     return currentDoctor;
                 }
             }

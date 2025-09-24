@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-public class Citizen extends User{
+public class Citizen extends User {
 
     @NotBlank
     @Pattern(regexp = "\\d{11}")
@@ -22,11 +22,11 @@ public class Citizen extends User{
     private List<FamilyMember> familyMembers;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="request_id")
+    @JoinColumn(name = "request_id")
     private Request request;
 
     public Citizen(String fullName, String username, String password, String email, String phoneNumber,
-                   String department, String prefecture, String AMKA, String apartmentAddress) {
+            String department, String prefecture, String AMKA, String apartmentAddress) {
 
         super(fullName, username, password, email, phoneNumber, department, prefecture);
 

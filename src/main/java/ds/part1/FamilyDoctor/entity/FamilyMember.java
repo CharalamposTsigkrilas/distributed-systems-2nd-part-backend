@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 @Entity
-@Table(	name = "family_members")
+@Table(name = "family_members")
 public class FamilyMember {
 
     @Id
@@ -24,7 +24,7 @@ public class FamilyMember {
     private String memberRelationship;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="appointment_id")
+    @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 
     public FamilyMember(String fullName, String AMKA, String memberRelationship) {

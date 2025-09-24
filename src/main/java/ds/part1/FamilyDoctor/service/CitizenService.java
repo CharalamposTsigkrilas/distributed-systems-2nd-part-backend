@@ -32,14 +32,14 @@ public class CitizenService {
     }
 
     @Transactional
-    public List<Citizen> getCitizens(){
+    public List<Citizen> getCitizens() {
         return citizenRepository.findAll();
     }
 
     @Transactional
-    public void saveCitizen(Citizen citizen){
+    public void saveCitizen(Citizen citizen) {
 
-        //Save citizen as a family member
+        // Save citizen as a family member
         FamilyMember familyMember = new FamilyMember();
         familyMember.setFullName(citizen.getFullName());
         familyMember.setAMKA(citizen.getAMKA());
@@ -55,7 +55,7 @@ public class CitizenService {
     }
 
     @Transactional
-    public void updateCitizen(Citizen citizen){
+    public void updateCitizen(Citizen citizen) {
         citizenRepository.save(citizen);
     }
 
@@ -65,18 +65,18 @@ public class CitizenService {
     }
 
     @Transactional
-    public Doctor getCitizenDoctor(Long citizenId){
+    public Doctor getCitizenDoctor(Long citizenId) {
 
         List<Doctor> doctors = doctorService.getDoctors();
 
-        for (Doctor currentDoctor : doctors){
+        for (Doctor currentDoctor : doctors) {
             Long currentDoctorId = currentDoctor.getId();
             List<Citizen> doctorCitizens = doctorService.getDoctorCitizens(currentDoctorId);
 
             for (Citizen currentCitizen : doctorCitizens) {
                 Long currentCitizenId = currentCitizen.getId();
 
-                if (currentCitizenId.equals(citizenId)){
+                if (currentCitizenId.equals(citizenId)) {
                     return currentDoctor;
                 }
             }
@@ -85,13 +85,13 @@ public class CitizenService {
     }
 
     @Transactional
-    public Request getCitizenRequest(Long citizenId){
+    public Request getCitizenRequest(Long citizenId) {
         Citizen citizen = citizenRepository.findById(citizenId).get();
         return citizen.getRequest();
     }
 
     @Transactional
-    public List<FamilyMember> getCitizenFamilyMembers(Long citizenId){
+    public List<FamilyMember> getCitizenFamilyMembers(Long citizenId) {
         Citizen citizen = citizenRepository.findById(citizenId).get();
         return citizen.getFamilyMembers();
     }

@@ -15,29 +15,29 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 public class AppConfig {
 
-    private SecurityScheme createAPIKeyScheme() {
-        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                .bearerFormat("JWT")
-                .scheme("bearer");
-    }
+        private SecurityScheme createAPIKeyScheme() {
+                return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                                .bearerFormat("JWT")
+                                .scheme("bearer");
+        }
 
-    @Bean
-    public OpenAPI openAPI() {
-        OpenAPI info = new OpenAPI().addSecurityItem(new SecurityRequirement().
-                        addList("Bearer Authentication"))
-                .components(new Components().addSecuritySchemes
-                        ("Bearer Authentication", createAPIKeyScheme()))
-                .info(new Info().title("FAMILY DOCTOR REST API")
-                        .description("This API is used in FamilyDoctorPart1 project")
-                        .version("1.0").contact(new Contact().name("Team 33")
-                                .email("it2021101@hua.gr").url("https://ZenXaris03.github.io"))
-                        .license(new License().name("License of API")
-                                .url("https://swagger.io/license/")));
-        return info;
-    }
+        @Bean
+        public OpenAPI openAPI() {
+                OpenAPI info = new OpenAPI().addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+                                .components(new Components().addSecuritySchemes("Bearer Authentication",
+                                                createAPIKeyScheme()))
+                                .info(new Info().title("FAMILY DOCTOR REST API")
+                                                .description("This API is used in FamilyDoctorPart1 project")
+                                                .version("1.0").contact(new Contact().name("Team 33")
+                                                                .email("it2021101@hua.gr")
+                                                                .url("https://ZenXaris03.github.io"))
+                                                .license(new License().name("License of API")
+                                                                .url("https://swagger.io/license/")));
+                return info;
+        }
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public BCryptPasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }

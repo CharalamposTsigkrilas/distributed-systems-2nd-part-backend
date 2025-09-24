@@ -24,19 +24,19 @@ public class DoctorService {
     }
 
     @Transactional
-    public List<Doctor> getDoctors(){
+    public List<Doctor> getDoctors() {
         return doctorRepository.findAll();
     }
 
     @Transactional
-    public void saveDoctor(Doctor doctor){
+    public void saveDoctor(Doctor doctor) {
         doctor.setAppointmentsCompleted(0);
         doctor.setRating(0F);
         doctorRepository.save(doctor);
     }
 
     @Transactional
-    public void updateDoctor(Doctor doctor){
+    public void updateDoctor(Doctor doctor) {
         doctorRepository.save(doctor);
     }
 
@@ -46,19 +46,19 @@ public class DoctorService {
     }
 
     @Transactional
-    public List<Appointment> getDoctorAppointments(Long doctorId){
+    public List<Appointment> getDoctorAppointments(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId).get();
         return doctor.getAppointments();
     }
 
     @Transactional
-    public List<Citizen> getDoctorCitizens(Long doctorId){
+    public List<Citizen> getDoctorCitizens(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId).get();
         return doctor.getCitizens();
     }
 
     @Transactional
-    public List<Request> getDoctorRequests(Long doctorId){
+    public List<Request> getDoctorRequests(Long doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId).get();
         return doctor.getRequests();
     }

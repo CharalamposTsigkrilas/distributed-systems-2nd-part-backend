@@ -21,33 +21,33 @@ public class RequestService {
     private DoctorService doctorService;
 
     @Transactional
-    public Request getRequest(Long requestId){
+    public Request getRequest(Long requestId) {
         return requestRepository.findById(requestId).get();
     }
 
     @Transactional
-    public List<Request> getRequests(){
+    public List<Request> getRequests() {
         return requestRepository.findAll();
     }
 
     @Transactional
-    public void saveRequest(Request request){
+    public void saveRequest(Request request) {
         request.setCurrentStatus(Request.status.unseen.toString());
         requestRepository.save(request);
     }
 
     @Transactional
-    public void updateRequest(Request request){
+    public void updateRequest(Request request) {
         requestRepository.save(request);
     }
 
     @Transactional
-    public void deleteRequest(Long requestId){
+    public void deleteRequest(Long requestId) {
         requestRepository.deleteById(requestId);
     }
 
     @Transactional
-    public Citizen getRequestCitizen(Long requestId){
+    public Citizen getRequestCitizen(Long requestId) {
         List<Citizen> citizens = citizenService.getCitizens();
 
         for (Citizen currentCitizen : citizens) {
@@ -66,7 +66,7 @@ public class RequestService {
     }
 
     @Transactional
-    public Doctor getRequestDoctor(Long requestId){
+    public Doctor getRequestDoctor(Long requestId) {
         List<Doctor> doctors = doctorService.getDoctors();
 
         for (Doctor currentDoctor : doctors) {
@@ -76,7 +76,7 @@ public class RequestService {
             for (Request currentDoctorRequest : doctorRequests) {
                 Long currentDoctorRequestId = currentDoctorRequest.getId();
 
-                if (currentDoctorRequestId.equals(requestId)){
+                if (currentDoctorRequestId.equals(requestId)) {
                     return currentDoctor;
                 }
             }

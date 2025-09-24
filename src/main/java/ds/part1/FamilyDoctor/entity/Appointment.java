@@ -33,11 +33,12 @@ public class Appointment {
 
     private int evaluationGrade;
 
-    public enum status {Set, Completed, Canceled, Changed};
+    public enum status {
+        Set, Completed, Canceled, Changed
+    };
 
     @NotBlank
     private String currentStatus;
-
 
     public Appointment() {
 

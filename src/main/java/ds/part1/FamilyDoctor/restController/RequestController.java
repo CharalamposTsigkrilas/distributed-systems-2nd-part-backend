@@ -29,49 +29,51 @@ public class RequestController {
     private DoctorService doctorService;
 
     @GetMapping("/{request_id}")
-    public Request getRequest(@PathVariable Long request_id){
+    public Request getRequest(@PathVariable Long request_id) {
         return requestService.getRequest(request_id);
     }
 
     @GetMapping("")
-    public List<Request> getRequests(){
+    public List<Request> getRequests() {
         return requestService.getRequests();
     }
 
     @GetMapping("/{request_id}/citizen")
-    public Citizen getCitizenFromRequest(@PathVariable Long request_id){
+    public Citizen getCitizenFromRequest(@PathVariable Long request_id) {
         return requestService.getRequestCitizen(request_id);
     }
 
     @GetMapping("/{request_id}/doctor")
-    public Doctor getDoctorFromRequest(@PathVariable Long request_id){
+    public Doctor getDoctorFromRequest(@PathVariable Long request_id) {
         return requestService.getRequestDoctor(request_id);
     }
 
     @PostMapping("/new/from/citizen/{citizen_id}/to/doctor/{doctor_id}")
-    public ResponseEntity<?> createRequest(@PathVariable Long citizen_id, @PathVariable Long doctor_id){
+    public ResponseEntity<?> createRequest(@PathVariable Long citizen_id, @PathVariable Long doctor_id) {
 
         Request request = new Request();
 
         Citizen citizen = citizenService.getCitizen(citizen_id);
         Doctor doctor = doctorService.getDoctor(doctor_id);
 
-        if (citizen==null){
+        if (citizen == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Request Citizen not found!"));
         }
 
-        if (doctor==null){
+        if (doctor == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Request Doctor not found!"));
         }
 
         Request citizenRequest = citizen.getRequest();
-        if (citizenRequest != null ) {
+        if (citizenRequest != null) {
             String requestStatus = citizenRequest.getCurrentStatus();
-            if (requestStatus.equals(Request.status.accepted.toString())){
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen's previous Request has already been accepted by a Doctor!"));
+            if (requestStatus.equals(Request.status.accepted.toString())) {
+                return ResponseEntity.badRequest().body(new MessageResponse(
+                        "Error: Citizen's previous Request has already been accepted by a Doctor!"));
             }
-            if (requestStatus.equals(Request.status.unseen.toString())){
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen has already sent a Request to a Doctor!"));
+            if (requestStatus.equals(Request.status.unseen.toString())) {
+                return ResponseEntity.badRequest()
+                        .body(new MessageResponse("Error: Citizen has already sent a Request to a Doctor!"));
             }
         }
 
@@ -87,14 +89,14 @@ public class RequestController {
     }
 
     @PostMapping("/{request_id}/answer/{answer}")
-    public ResponseEntity<?> DoctorAnswer(@PathVariable Long request_id, @PathVariable String answer){
+    public ResponseEntity<?> DoctorAnswer(@PathVariable Long request_id, @PathVariable String answer) {
         Request request = requestService.getRequest(request_id);
 
-        String currStatus=Request.status.unseen.toString();
+        String currStatus = Request.status.unseen.toString();
 
-        if(answer.equals("accept")){
+        if (answer.equals("accept")) {
             currStatus = Request.status.accepted.toString();
-        }else if(answer.equals("reject")){
+        } else if (answer.equals("reject")) {
             currStatus = Request.status.rejected.toString();
         }
 
@@ -111,13 +113,14 @@ public class RequestController {
         }
 
         Request citizenRequest = requestCitizen.getRequest();
-        if (citizenRequest == null ) {
+        if (citizenRequest == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen Request not found!"));
         }
 
         String requestStatus = citizenRequest.getCurrentStatus();
-        if (!requestStatus.equals(Request.status.unseen.toString())){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen's previous Request has already been answered by a Doctor!"));
+        if (!requestStatus.equals(Request.status.unseen.toString())) {
+            return ResponseEntity.badRequest().body(
+                    new MessageResponse("Error: Citizen's previous Request has already been answered by a Doctor!"));
         }
 
         doctorRequests.remove(request);
@@ -142,16 +145,17 @@ public class RequestController {
     }
 
     @PostMapping("/{request_id}/delete")
-    public ResponseEntity<?> cancelRequest(@PathVariable Long request_id){
+    public ResponseEntity<?> cancelRequest(@PathVariable Long request_id) {
 
         Request request = requestService.getRequest(request_id);
-        if (request == null){
+        if (request == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Request not found!"));
         }
         String status = request.getCurrentStatus();
 
-        if(status.equals(Request.status.accepted.toString()) || status.equals(Request.status.rejected.toString())){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen's Request cannot be canceled! It has already been answered by a Doctor!"));
+        if (status.equals(Request.status.accepted.toString()) || status.equals(Request.status.rejected.toString())) {
+            return ResponseEntity.badRequest().body(new MessageResponse(
+                    "Error: Citizen's Request cannot be canceled! It has already been answered by a Doctor!"));
         }
 
         Doctor requestDoctor = requestService.getRequestDoctor(request_id);
@@ -166,7 +170,7 @@ public class RequestController {
         }
 
         Request citizenRequest = requestCitizen.getRequest();
-        if (citizenRequest == null ) {
+        if (citizenRequest == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Citizen Request not found!"));
         }
 
