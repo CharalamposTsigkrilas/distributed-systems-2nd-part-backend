@@ -20,7 +20,7 @@
 ## Build & Run the App
 
 ```sh
-./mvnw spring-boot:run
+./mvnw spring-boot:run "-Dmaven.test.skip"
 ```
 
 ## Clean the build files
