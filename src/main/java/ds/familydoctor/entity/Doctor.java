@@ -23,7 +23,7 @@ public class Doctor {
     private String specialty;
 
     @NotBlank
-    private String office_address;
+    private String officeAddress;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
@@ -38,11 +38,11 @@ public class Doctor {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Request> requests;
 
-    public Doctor(Long id, String afm, String specialty, String office_address, User user, List<Citizen> patients, List<Appointment> appointments, List<Request> requests) {
+    public Doctor(Long id, String afm, String specialty, String officeAddress, User user, List<Citizen> patients, List<Appointment> appointments, List<Request> requests) {
         this.id = id;
         this.afm = afm;
         this.specialty = specialty;
-        this.office_address = office_address;
+        this.officeAddress = officeAddress;
         this.user = user;
         this.patients = patients;
         this.appointments = appointments;
@@ -76,12 +76,12 @@ public class Doctor {
         this.specialty = specialty;
     }
 
-    public String getOffice_address() {
-        return office_address;
+    public String getOfficeAddress() {
+        return officeAddress;
     }
 
-    public void setOffice_address(String office_address) {
-        this.office_address = office_address;
+    public void setOfficeAddress(String officeAddress) {
+        this.officeAddress = officeAddress;
     }
 
     public User getUser() {

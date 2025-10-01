@@ -94,15 +94,15 @@ public class Citizen {
     }
 
     // constructor / helper για αυτόματη δημιουργία FamilyMember για τον εαυτό
-//    @PrePersist
-//    public void ensureSelfFamilyMember(){
-//        if (familyMembers.stream().noneMatch(fm -> fm.isSelf())) {
-//            FamilyMember self = new FamilyMember();
-//            self.setName(this.user.getUsername());
-//            self.setSelf(true);
-//            self.setCitizen(this);
-//            familyMembers.add(self);
-//        }
-//    }
+    @PrePersist
+    public void ensureSelfFamilyMember(){
+        if (familyMembers.stream().noneMatch(fm -> fm.getMemberRelationship().equals(FamilyMember.Relationship.SELF))) {
+            FamilyMember self = new FamilyMember();
+            self.setName(this.user.getFullName());
+            self.setMemberRelationship(FamilyMember.Relationship.SELF);
+            self.setCitizen(this);
+            familyMembers.add(self);
+        }
+    }
 
 }

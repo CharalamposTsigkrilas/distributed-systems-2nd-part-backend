@@ -29,14 +29,14 @@ public class User {
     private String email;
 
     @NotBlank
-    private String full_name;
+    private String fullName;
 
     @NotBlank
     @Pattern(regexp = "\\d{10}")
-    private String phone_number;
+    private String phoneNumber;
 
     @NotBlank
-    private String home_address;
+    private String homeAddress;
 
     @NotBlank
     private String country;
@@ -60,14 +60,14 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Doctor doctorProfile;
 
-    public User(Long id, String username, String password, String email, String full_name, String phone_number, String home_address, String country, String continent, String prefecture, String city, Set<Role> roles, Citizen citizenProfile, Doctor doctorProfile) {
+    public User(Long id, String username, String password, String email, String fullName, String phoneNumber, String homeAddress, String country, String continent, String prefecture, String city, Set<Role> roles, Citizen citizenProfile, Doctor doctorProfile) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.full_name = full_name;
-        this.phone_number = phone_number;
-        this.home_address = home_address;
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.homeAddress = homeAddress;
         this.country = country;
         this.continent = continent;
         this.prefecture = prefecture;
@@ -112,28 +112,28 @@ public class User {
         this.email = email;
     }
 
-    public String getFull_name() {
-        return full_name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFull_name(String full_name) {
-        this.full_name = full_name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
-    public String getPhone_number() {
-        return phone_number;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhone_number(String phone_number) {
-        this.phone_number = phone_number;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
-    public String getHome_address() {
-        return home_address;
+    public String getHomeAddress() {
+        return homeAddress;
     }
 
-    public void setHome_address(String home_address) {
-        this.home_address = home_address;
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
     }
 
     public String getCountry() {
