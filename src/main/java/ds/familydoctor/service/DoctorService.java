@@ -2,6 +2,7 @@ package ds.familydoctor.service;
 
 import ds.familydoctor.entity.Doctor;
 import ds.familydoctor.repository.DoctorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,26 +17,30 @@ public class DoctorService {
 
     @Transactional
     public Doctor getDoctor(Long doctorId) {
-        return docRepo.findById(doctorId).get();
+        return docRepo.findById(doctorId)
+                .orElseThrow(() -> new EntityNotFoundException("Doctor not found with this id: " + doctorId));
     }
 
     @Transactional
-    public List<Doctor> getDoctors() {
+    public List<Doctor> getAllDoctors() {
         return docRepo.findAll();
     }
 
     @Transactional
-    public void saveDoctor(Doctor doc) {
-        docRepo.save(doc);
+    public Doctor save(Doctor doc) {
+        return docRepo.save(doc);
     }
 
     @Transactional
-    public void updateDoctor(Doctor doc) {
-        docRepo.save(doc);
+    public Doctor updateDoctor(Doctor doc) {
+        return docRepo.save(doc);
     }
 
     @Transactional
-    public void deleteDoctor(Long doctorId) {
+    public void delete(Long doctorId) {
+        if (!docRepo.existsById(doctorId)) {
+            throw new EntityNotFoundException("Doctor not found with this id: " + doctorId);
+        }
         docRepo.deleteById(doctorId);
     }
 

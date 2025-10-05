@@ -95,7 +95,8 @@ public class FamilyMember {
     }
 
     // helper - count pending
-//    public long pendingAppointmentsCount() {
-//        return appointments.stream().filter(a -> a.getStatus()== Appointment.AppointmentStatus.PENDING).count();
-//    }
+    public boolean hasActiveAppointment() {
+        return appointments.stream().anyMatch(a -> a.getStatus() == Appointment.AppointmentStatus.PENDING);
+    }
+
 }

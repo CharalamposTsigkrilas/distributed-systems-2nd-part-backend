@@ -2,6 +2,7 @@ package ds.familydoctor.service;
 
 import ds.familydoctor.entity.Citizen;
 import ds.familydoctor.repository.CitizenRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,27 +17,31 @@ public class CitizenService {
 
     @Transactional
     public Citizen getCitizen(Long citizenId) {
-        return citiRepo.findById(citizenId).get();
+        return citiRepo.findById(citizenId)
+                .orElseThrow(() -> new EntityNotFoundException("Citizen not found with this id: " + citizenId));
     }
 
     @Transactional
-    public List<Citizen> getCitizens() {
+    public List<Citizen> getAllCitizens() {
         return citiRepo.findAll();
     }
 
     @Transactional
-    public void saveCitizen(Citizen citi) {
+    public Citizen save(Citizen citi) {
         citi.ensureSelfFamilyMember();
-        citiRepo.save(citi);
+        return citiRepo.save(citi);
     }
 
     @Transactional
-    public void updateCitizen(Citizen citi) {
-        citiRepo.save(citi);
+    public Citizen update(Citizen citi) {
+        return citiRepo.save(citi);
     }
 
     @Transactional
     public void deleteCitizen(Long citizenId) {
+        if (!citiRepo.existsById(citizenId)){
+            throw new EntityNotFoundException("Citizen not found with this id: " + citizenId);
+        }
         citiRepo.deleteById(citizenId);
     }
 

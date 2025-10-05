@@ -4,6 +4,7 @@ import ds.familydoctor.entity.Appointment;
 import ds.familydoctor.entity.FamilyMember;
 import ds.familydoctor.repository.AppointmentRepository;
 import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,27 +19,31 @@ public class AppointmentService {
 
     @Transactional
     public Appointment getAppointment(Long appointmentId) {
-        return appoRepo.findById(appointmentId).get();
+        return appoRepo.findById(appointmentId)
+                .orElseThrow(() -> new EntityNotFoundException("Appointment not found with this id: " + appointmentId));
     }
 
     @Transactional
-    public List<Appointment> getAppointments() {
+    public List<Appointment> getAllAppointments() {
         return appoRepo.findAll();
     }
 
     @Transactional
-    public void saveAppointment(Appointment appo) {
+    public Appointment save(Appointment appo) {
         appo.setStatus(Appointment.AppointmentStatus.PENDING);
-        appoRepo.save(appo);
+        return appoRepo.save(appo);
     }
 
     @Transactional
-    public void updateAppointment(Appointment appo) {
-        appoRepo.save(appo);
+    public Appointment update(Appointment appo) {
+        return appoRepo.save(appo);
     }
 
     @Transactional
-    public void deleteAppointment(Long appointmentId) {
+    public void delete(Long appointmentId) {
+        if (!appoRepo.existsById(appointmentId)) {
+            throw new EntityNotFoundException("Appointment not found with this id: " + appointmentId);
+        }
         appoRepo.deleteById(appointmentId);
     }
 

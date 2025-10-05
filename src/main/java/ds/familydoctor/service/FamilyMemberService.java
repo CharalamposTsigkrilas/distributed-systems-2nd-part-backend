@@ -2,6 +2,7 @@ package ds.familydoctor.service;
 
 import ds.familydoctor.entity.FamilyMember;
 import ds.familydoctor.repository.FamilyMemberRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,26 +17,30 @@ public class FamilyMemberService {
 
     @Transactional
     public FamilyMember getFamilyMember(Long familyMemberId) {
-        return fmRepo.findById(familyMemberId).get();
+        return fmRepo.findById(familyMemberId)
+                .orElseThrow(() -> new EntityNotFoundException("Family Member not found with this id: " + familyMemberId));
     }
 
     @Transactional
-    public List<FamilyMember> getFamilyMembers() {
+    public List<FamilyMember> getAllFamilyMembers() {
         return fmRepo.findAll();
     }
 
     @Transactional
-    public void saveFamilyMember(FamilyMember fm) {
-        fmRepo.save(fm);
+    public FamilyMember save(FamilyMember fm) {
+        return fmRepo.save(fm);
     }
 
     @Transactional
-    public void updateFamilyMember(FamilyMember fm) {
-        fmRepo.save(fm);
+    public FamilyMember update(FamilyMember fm) {
+        return fmRepo.save(fm);
     }
 
     @Transactional
-    public void deleteFamilyMember(Long familyMemberId) {
+    public void delete(Long familyMemberId) {
+        if (!fmRepo.existsById(familyMemberId)) {
+            throw new EntityNotFoundException("Family Member not found with this id: " + familyMemberId);
+        }
         fmRepo.deleteById(familyMemberId);
     }
 
