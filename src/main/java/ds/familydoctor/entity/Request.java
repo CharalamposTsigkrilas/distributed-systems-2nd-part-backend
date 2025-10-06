@@ -12,7 +12,7 @@ public class Request {
     private Long id;
 
     public enum RequestStatus {
-        PENDING, ACCEPTED, REJECTED
+        PENDING, ACCEPTED, REJECTED, CANCELED
     }
 
     @Enumerated(EnumType.STRING)
