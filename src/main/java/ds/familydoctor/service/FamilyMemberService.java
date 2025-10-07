@@ -44,4 +44,9 @@ public class FamilyMemberService {
         fmRepo.deleteById(familyMemberId);
     }
 
+//    @Transactional
+//    public FamilyMember createMember() {
+//
+//    }
+
 }

@@ -1,6 +1,7 @@
 package ds.familydoctor.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "roles")
@@ -11,6 +12,7 @@ public class Role {
     private Long id;
 
     @Column
+    @NotBlank
     private String name;
 
     public Role(Long id, String name) {

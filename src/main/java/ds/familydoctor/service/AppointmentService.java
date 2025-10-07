@@ -100,7 +100,7 @@ public class AppointmentService {
     @Transactional
     public void cancelAppointment(Long appointmentId) {
         Appointment appo = getAppointment(appointmentId);
-        if(appo.getStatus()!= Appointment.AppointmentStatus.PENDING) {
+        if (appo.getStatus()!= Appointment.AppointmentStatus.PENDING) {
             throw new IllegalStateException("Only pending appointments can be canceled.");
         }
 
@@ -111,7 +111,7 @@ public class AppointmentService {
     @Transactional
     public void completeAppointment(Long appointmentId) {
         Appointment appo = getAppointment(appointmentId);
-        if(appo.getStatus()!= Appointment.AppointmentStatus.PENDING) {
+        if (appo.getStatus()!= Appointment.AppointmentStatus.PENDING) {
             throw new IllegalStateException("Only pending appointments can be completed.");
         }
 
