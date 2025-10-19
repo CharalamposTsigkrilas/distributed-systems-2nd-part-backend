@@ -22,7 +22,7 @@ public class AppointmentService {
     @Transactional
     public Appointment getAppointment(Long appointmentId) {
         return appoRepo.findById(appointmentId)
-                .orElseThrow(() -> new EntityNotFoundException("Appointment not found with this id: " + appointmentId));
+                .orElseThrow(() -> new EntityNotFoundException("Appointment not found with this id: " + appointmentId + "."));
     }
 
     @Transactional
@@ -44,7 +44,7 @@ public class AppointmentService {
     @Transactional
     public void delete(Long appointmentId) {
         if (!appoRepo.existsById(appointmentId)) {
-            throw new EntityNotFoundException("Appointment not found with this id: " + appointmentId);
+            throw new EntityNotFoundException("Appointment not found with this id: " + appointmentId + ".");
         }
         appoRepo.deleteById(appointmentId);
     }
@@ -70,12 +70,12 @@ public class AppointmentService {
         }
 
         if (!appointmentDateTime.isAfter(OffsetDateTime.now())) {
-            throw new IllegalArgumentException("Appointment must be in the future");
+            throw new IllegalArgumentException("Appointment must be in the future.");
         }
 
         // family member mustn't have pending appointments
         if (fm.hasActiveAppointment()) {
-            throw new IllegalStateException("FamilyMember already has a pending appointment");
+            throw new IllegalStateException("FamilyMember already has a pending appointment.");
         }
 
         // no conflicting appointment for doctor at same datetime
@@ -85,7 +85,7 @@ public class AppointmentService {
 
         // also ensure no existing pending appointment between same doctor & familyMember
         if (doctorHasAppointmentWithThisFamilyMember(doc, fm, Appointment.AppointmentStatus.PENDING)) {
-            throw new IllegalStateException("Pending appointment already exists with this doctor for this family member");
+            throw new IllegalStateException("Pending appointment already exists with this doctor for this family member.");
         }
 
         Appointment appo = new Appointment();

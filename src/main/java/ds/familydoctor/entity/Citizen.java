@@ -3,7 +3,7 @@ package ds.familydoctor.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "citizens", uniqueConstraints = {
@@ -96,9 +96,16 @@ public class Citizen {
     // constructor / helper για αυτόματη δημιουργία FamilyMember για τον εαυτό
     @PrePersist
     public void ensureSelfFamilyMember(){
-        if (familyMembers.stream().noneMatch(fm -> fm.getMemberRelationship().equals(FamilyMember.Relationship.SELF))) {
+        if (familyMembers == null) {
+            familyMembers = new ArrayList<>();
+        }
+
+        boolean hasSelf = familyMembers.stream()
+                .anyMatch(fm -> fm.getMemberRelationship() == FamilyMember.Relationship.SELF);
+
+        if (!hasSelf) {
             FamilyMember self = new FamilyMember();
-            self.setName(this.user.getFullName());
+            self.setName(user != null ? user.getFullName() : "Unknown");
             self.setMemberRelationship(FamilyMember.Relationship.SELF);
             self.setCitizen(this);
             familyMembers.add(self);

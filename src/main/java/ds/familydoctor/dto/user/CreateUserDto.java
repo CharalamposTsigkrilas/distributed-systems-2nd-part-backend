@@ -2,7 +2,7 @@ package ds.familydoctor.dto.user;
 
 import jakarta.validation.constraints.*;
 
-public class CreateUserDto {
+public abstract class CreateUserDto {
 
     @NotBlank
     @Size(min = 5, max = 40)

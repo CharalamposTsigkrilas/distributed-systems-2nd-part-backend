@@ -25,7 +25,7 @@ public class RequestService {
     @Transactional
     public Request getRequest(Long requestId) {
         return reqRepo.findById(requestId)
-                .orElseThrow(() -> new EntityNotFoundException("Request not found with this id: " + requestId));
+                .orElseThrow(() -> new EntityNotFoundException("Request not found with this id: " + requestId + "."));
     }
 
     @Transactional
@@ -52,7 +52,7 @@ public class RequestService {
     @Transactional
     public void deleteRequest(Long requestId) {
         if (!reqRepo.existsById(requestId)) {
-            throw new EntityNotFoundException("Request not found with this id: " + requestId);
+            throw new EntityNotFoundException("Request not found with this id: " + requestId + ".");
         }
         reqRepo.deleteById(requestId);
     }

@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Optional<Doctor> findByAfm(String afm);
+
+    boolean existsByAfm(String afm);
 }

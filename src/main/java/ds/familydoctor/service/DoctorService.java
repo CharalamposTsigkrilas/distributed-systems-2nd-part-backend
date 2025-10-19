@@ -1,10 +1,12 @@
 package ds.familydoctor.service;
 
-import ds.familydoctor.entity.Doctor;
-import ds.familydoctor.repository.DoctorRepository;
+import ds.familydoctor.dto.doctor.CreateDoctorDto;
+import ds.familydoctor.entity.*;
+import ds.familydoctor.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +17,19 @@ public class DoctorService {
     @Autowired
     private DoctorRepository docRepo;
 
+    @Autowired
+    private RoleRepository roleRepo;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @Transactional
     public Doctor getDoctor(Long doctorId) {
         return docRepo.findById(doctorId)
-                .orElseThrow(() -> new EntityNotFoundException("Doctor not found with this id: " + doctorId));
+                .orElseThrow(() -> new EntityNotFoundException("Doctor not found with this id: " + doctorId + "."));
     }
 
     @Transactional
@@ -39,9 +50,30 @@ public class DoctorService {
     @Transactional
     public void delete(Long doctorId) {
         if (!docRepo.existsById(doctorId)) {
-            throw new EntityNotFoundException("Doctor not found with this id: " + doctorId);
+            throw new EntityNotFoundException("Doctor not found with this id: " + doctorId + ".");
         }
         docRepo.deleteById(doctorId);
     }
 
+    @Transactional
+    public boolean alreadyExists(String afm) {
+        return docRepo.existsByAfm(afm);
+    }
+
+    @Transactional
+    public Doctor create(CreateDoctorDto docDto){
+
+        User user = userService.createUserWithRole(docDto, "DOCTOR");
+
+        if (alreadyExists(docDto.getAfm())) {
+            throw new IllegalStateException("AFM already in use.");
+        }
+
+        Doctor doctor = new Doctor();
+        doctor.setUser(user);
+        doctor.setAfm(docDto.getAfm());
+        doctor.setSpecialty(docDto.getSpecialty());
+        doctor.setOfficeAddress(docDto.getOfficeAddress());
+        return save(doctor);
+    }
 }

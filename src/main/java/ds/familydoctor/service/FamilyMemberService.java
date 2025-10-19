@@ -1,6 +1,6 @@
 package ds.familydoctor.service;
 
-import ds.familydoctor.entity.FamilyMember;
+import ds.familydoctor.entity.*;
 import ds.familydoctor.repository.FamilyMemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -15,10 +15,13 @@ public class FamilyMemberService {
     @Autowired
     private FamilyMemberRepository fmRepo;
 
+    @Autowired
+    private CitizenService citizenService;
+
     @Transactional
     public FamilyMember getFamilyMember(Long familyMemberId) {
         return fmRepo.findById(familyMemberId)
-                .orElseThrow(() -> new EntityNotFoundException("Family Member not found with this id: " + familyMemberId));
+                .orElseThrow(() -> new EntityNotFoundException("Family Member not found with this id: " + familyMemberId + "."));
     }
 
     @Transactional
@@ -39,14 +42,16 @@ public class FamilyMemberService {
     @Transactional
     public void delete(Long familyMemberId) {
         if (!fmRepo.existsById(familyMemberId)) {
-            throw new EntityNotFoundException("Family Member not found with this id: " + familyMemberId);
+            throw new EntityNotFoundException("Family Member not found with this id: " + familyMemberId + ".");
         }
         fmRepo.deleteById(familyMemberId);
     }
 
-//    @Transactional
-//    public FamilyMember createMember() {
-//
-//    }
+    @Transactional
+    public FamilyMember createFamilyMember(Long citizenId, FamilyMember fm) {
+        Citizen citizen = citizenService.getCitizen(citizenId);
+        fm.setCitizen(citizen);
+        return save(fm);
+    }
 
 }
